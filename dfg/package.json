@@ -1,0 +1,14 @@
+{
+  "name": "2cc55cf019c37995",
+  "main": "2cc55cf019c37995@224.js",
+  "version": "224.0.0",
+  "homepage": "https://observablehq.com/d/2cc55cf019c37995",
+  "author": {
+    "name": "Anton Yeshchenko",
+    "url": "https://observablehq.com/@yesanton"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}
