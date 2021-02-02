@@ -69,31 +69,3 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
  })
 
 
-// //brushes container
-// var gBrushes = svg.append('g')
-// 	.attr("class", "brushes");
-
-// //keep track of existing brushes
-// var brushes = [];
-
-// function newBrush() {
-// 	var brush = d3.svg.brush()
-// 		.x(x)
-// 		.on("brush", brushed) //Make sure don't pass surrounding brushes
-// 		.on("brushend", brushend); //Keep track of what brushes is surrounding
-
-//   brushes.push({id: brushes.length, brush: brush});  
-  
-//   function brushstart() {
-//     if (d3.event.sourceEvent)
-//         brush.mouseStart = d3.event.sourceEvent.x;
-
-//     if(brush.extent.start == undefined){
-//       d3.event.sourceEvent.x;
-//     }
-// };
-
-// }
-
-
-// newBrush();
