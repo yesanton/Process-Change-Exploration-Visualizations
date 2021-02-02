@@ -14,12 +14,11 @@ var svg = d3.select("#my_dataviz")
 
 //Read the data
 d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv",
-
   // When reading the csv, I must format variables:
   function(d){
     return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
-  },
-
+  })
+  .then(
   // Now I can use this dataset:
   function(data) {
 
@@ -50,4 +49,51 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
         .y1(function(d) { return y(d.value) })
         )
 
-})
+    //add brushing features
+
+    svg.call(d3.brushX() // add brush feature 
+        .extent([[0,0],[width,height+margin.bottom]])
+        .on('start end', updateChart)  // Each time the brush selection changes, trigger the 'updateChart' function
+        )
+
+    // this function is usually called 'brushed'
+    function updateChart(event) {
+      extentSelection = event.selection
+      console.log(extentSelection)
+
+      //here is the action on the selection
+    }
+    })
+    .catch(function(error){
+      console.log('cannot import file')
+ })
+
+
+// //brushes container
+// var gBrushes = svg.append('g')
+// 	.attr("class", "brushes");
+
+// //keep track of existing brushes
+// var brushes = [];
+
+// function newBrush() {
+// 	var brush = d3.svg.brush()
+// 		.x(x)
+// 		.on("brush", brushed) //Make sure don't pass surrounding brushes
+// 		.on("brushend", brushend); //Keep track of what brushes is surrounding
+
+//   brushes.push({id: brushes.length, brush: brush});  
+  
+//   function brushstart() {
+//     if (d3.event.sourceEvent)
+//         brush.mouseStart = d3.event.sourceEvent.x;
+
+//     if(brush.extent.start == undefined){
+//       d3.event.sourceEvent.x;
+//     }
+// };
+
+// }
+
+
+// newBrush();
