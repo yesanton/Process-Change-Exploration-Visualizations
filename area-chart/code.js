@@ -50,17 +50,38 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
         )
 
     //add brushing features
+    brushes = [] 
 
-    svg.call(d3.brushX() // add brush feature 
-        .extent([[0,0],[width,height+margin.bottom]])
-        .on('start end', updateChart)  // Each time the brush selection changes, trigger the 'updateChart' function
-        )
+    brush1 = d3.brushX() // add brush feature 
+               .extent([[0,0],[width,(height+margin.bottom)]])
+               .on('end', updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+// .on('start end', updateChart)  // Each time the brush selection changes, trigger the 'updateChart' function
+    svg.call(brush1)
 
+    brush2 = d3.brushX() // add brush feature 
+               .extent([[0,0],[width,(height+margin.bottom)]])
+               .on('end', updateChart2); // Each time the brush selection changes, trigger the 'updateChart' function
+
+    // svg.call(d3.brushX() // add brush feature 
+    //     .extent([[0,0],[width,height+margin.bottom]])
+    //     // .on('start end', updateChart)  // Each time the brush selection changes, trigger the 'updateChart' function
+    // )
     // this function is usually called 'brushed'
     function updateChart(event) {
-      extentSelection = event.selection
-      console.log(extentSelection)
-
+      // extentSelection = event.selection
+      // console.log(extentSelection)
+      console.log("update 1")
+      svg.call(brush1)
+         .on(".brush", null)
+         .call(brush2);
+      //here is the action on the selection
+    }
+    function updateChart2(event) {
+      // extentSelection = event.selection
+      console.log("update 2")
+      svg.call(brush2)
+         .on(".brush", null)
+         .call(brush1);
       //here is the action on the selection
     }
     })
