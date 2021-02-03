@@ -67,22 +67,21 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
     //     // .on('start end', updateChart)  // Each time the brush selection changes, trigger the 'updateChart' function
     // )
     // this function is usually called 'brushed'
+
+
+
     function updateChart(event) {
-      // extentSelection = event.selection
-      // console.log(extentSelection)
       console.log("update 1")
       svg.call(brush1)
          .on(".brush", null)
          .call(brush2);
-      //here is the action on the selection
     }
+    
     function updateChart2(event) {
-      // extentSelection = event.selection
       console.log("update 2")
       svg.call(brush2)
          .on(".brush", null)
          .call(brush1);
-      //here is the action on the selection
     }
     })
     .catch(function(error){
