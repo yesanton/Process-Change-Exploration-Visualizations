@@ -1,0 +1,67 @@
+<html>
+<head>
+    <style>
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            background-color: #2a5599;
+            color: white;
+            padding: 5px;
+            /* change the text to white and add a padding of 5px */
+        }
+
+        svg {/* Add code to show a black border of 1px around all SVGs elements in the page */
+          border: 1px solid black;
+        }
+        .mainView {
+          display: flex; /* or inline-flex  https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
+          flex-flow: column;
+          /* flex-wrap: wrap;   */
+          width: 100%;
+          height: 100%;
+
+        }
+        /* - Use the "display flex" feature from to show the items from class `mainView` side by side  */
+
+        /* Use a collapsed column to break to a new column */
+        .break { /*just to make a line break */
+            flex-basis: 100%;
+            height: 0;
+        }
+        #LineChart {
+            width: 100%;
+            height: 30%;
+        }
+        #DFGChart {
+            width: 100%;
+            height: 70%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Future process visualization</h1>
+    <div class="mainView">
+        <div>
+            <h2>DFGChart</h2>
+            <svg id="DFGChart"></svg>
+        </div>
+        <!--break to a new row -->
+         <!-- <div class="break"></div>  -->
+        <div id = "LineChartDiv">
+            <h2>LineChart</h2>
+            <svg id="LineChart"  ></svg>
+        </div>
+    </div>
+</body>
+
+<script src="d3.js"></script>
+<script src="multiple-bushes.js"></script>
+
+<script> 
+
+</script>
+
+</html>

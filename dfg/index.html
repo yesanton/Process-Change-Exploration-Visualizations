@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>Mobile Patent Suits</title>
-<link rel="stylesheet" type="text/css" href="./inspector.css">
-<body>
-<script type="module">
 
-import define from "./index.js";
-import {Runtime, Library, Inspector} from "./runtime.js";
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
 
-const runtime = new Runtime();
-const main = runtime.module(define, Inspector.into(document.body));
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
 
-</script>
+<script src="code.js"></script>
