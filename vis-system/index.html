@@ -31,15 +31,26 @@
             height: 0;
         }
         #LineChart {
+            fill: white;
             width: 100%;
-            height: 30%;
         }
         #DFGChart {
             width: 100%;
-            height: 70%;
         }
     </style>
 </head>
+
+<script src="d3.js"></script>
+
+<!-- next ones are for the dfg -->
+<link rel="stylesheet" href="dfg/demo.css">
+<link id="css" rel="stylesheet" href="dfg/main-dfg.css">
+<!-- <script src="https://d3js.org/d3.v5.min.js" charset="utf-8"></script> -->
+<script src="dagre-d3.js"></script>
+<link rel="stylesheet" href="dfg/tipsy.css">
+<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="dfg/tipsy.js"></script>
+
 
 <body>
     <h1>Future process visualization</h1>
@@ -52,13 +63,15 @@
          <!-- <div class="break"></div>  -->
         <div id = "LineChartDiv">
             <h2>LineChart</h2>
-            <svg id="LineChart"  ></svg>
+            <svg id="LineChart"></svg>
         </div>
     </div>
 </body>
 
-<script src="d3.js"></script>
-<script src="multiple-bushes.js"></script>
+
+<script id="js" src="dfg/main-dfg.js"></script>
+<script src="linechart/multiple-bushes.js"></script>
+<script src="index.js"></script>
 
 <script> 
 

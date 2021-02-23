@@ -70,19 +70,19 @@ d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_data
 
 
 
-    function updateChart(event) {
-      console.log("update 1")
-      svg.call(brush1)
-         .on(".brush", null)
-         .call(brush2);
-    }
+    // function updateChart(event) {
+    //   console.log("update 1")
+    //   svg.call(brush1)
+    //      .on(".brush", null)
+    //      .call(brush2);
+    // }
     
-    function updateChart2(event) {
-      console.log("update 2")
-      svg.call(brush2)
-         .on(".brush", null)
-         .call(brush1);
-    }
+    // function updateChart2(event) {
+    //   console.log("update 2")
+    //   svg.call(brush2)
+    //      .on(".brush", null)
+    //      .call(brush1);
+    // }
     })
     .catch(function(error){
       console.log('cannot import file')
