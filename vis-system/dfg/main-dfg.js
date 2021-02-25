@@ -11,7 +11,7 @@ function configDFG(){
 
     config = {}
     config.g = g
-    config.threshold_arc_min = 150 
+    config.threshold_arc_min = 150
     config.threshold_arc_diff_min = 10
     return config;
 }
@@ -20,6 +20,8 @@ function configDFG(){
 
 //function to draw dfg on 
 function drawDFG(config_dfg, data){
+    console.log("data:  _------>");
+
     console.log(data)
     console.log("dfg drawing start")
 
@@ -103,7 +105,10 @@ function drawDFG(config_dfg, data){
     console.log("><<< config_dfg.g:   ")
 
     console.log(config_dfg.g)
+    console.log(states)
+    console.log(1);
 
+    
     // Add states to the graph, set labels, and style
     Object.keys(states).forEach(function(state) {
         var value = states[state];
@@ -112,7 +117,7 @@ function drawDFG(config_dfg, data){
         config_dfg.g.setNode(state, value);
         // console.log(state + ' ' + value)
     });
-    
+    delete states;
 
     // //experiment
     // config_dfg.g.setEdge('a', 'b')

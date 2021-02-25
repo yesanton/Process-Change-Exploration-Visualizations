@@ -1,48 +1,53 @@
 // for further help with sliders, documentation is here https://github.com/johnwalley/d3-simple-slider
 
 console.log('in the making slider code')
-var slider = d3
+var pathSlider = d3
     .sliderVertical()
     .min(0)
-    .max(100)
-    .step(1)
+    .max(1)
+    .step(0.01)
     .width(300)
     .height('400')
+    .tickFormat(d3.format('.0%'))
+    .ticks(2)
     .displayValue(true)
-    .on('onchange', (val) => {
+    .on('onchange', (valPath) => {
         // do somethng with the value 
+        updatePathAndActivitySliders(valPath, undefined);
     });
 
-var slider2 = d3
+var activitySlider = d3
     .sliderVertical()
     .min(0)
-    .max(100)
-    .step(1)
+    .max(1)
+    .step(0.01)
     .width(300)
+    .ticks(2)
     .height(400)
+    .tickFormat(d3.format('.0%'))
     .displayValue(true)
-    .on('onchange', (val) => {
+    .on('onchange', (valActivity) => {
         // do something with the value 
+        updatePathAndActivitySliders(undefined, valActivity);
     });
 
-let slider1svg = d3.select('#SliderDivId')
+let pathSliderSvg = d3.select('#SliderDivId')
     .append('svg')
     .attr('width', '6vw')
-    .attr('height', "60vh")
-slider1svg
+    .attr('height', "70vh")
+    pathSliderSvg
     .append('g')
     .attr('transform', 'translate(60,30)')
-    .call(slider);
-slider1svg.append('g').attr('transform', 'translate(0,10)').append('text').text('Path slider')
+    .call(pathSlider);
+pathSliderSvg.append('g').attr('transform', 'translate(0,10)').append('text').text('Path slider')
 
 
-let slider2svg = d3.select('#SliderDivId')
+let activitySliderSvg = d3.select('#SliderDivId')
     .append('svg')
     .attr('width', '6vw')
-    .attr('height', "60vh")
-slider2svg
+    .attr('height', "70vh")
+    activitySliderSvg
     .append('g')
     .attr('transform', 'translate(60,30)')
-    .call(slider2);
-
-slider2svg.append('g').attr('transform', 'translate(0,10)').append('text').text('Activities slider')
+    .call(activitySlider);    
+activitySliderSvg.append('g').attr('transform', 'translate(0,10)').append('text').text('Activities slider')
