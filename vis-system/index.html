@@ -18,10 +18,13 @@
         .mainView {
           display: flex; /* or inline-flex  https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
           flex-flow: column;
+          width: 98vw;
           /* flex-wrap: wrap;   */
-          width: 100%;
-          height: 100%;
-
+        
+        }
+        .subView {
+            display: flex;
+            flex-flow: row;
         }
         /* - Use the "display flex" feature from to show the items from class `mainView` side by side  */
 
@@ -30,13 +33,24 @@
             flex-basis: 100%;
             height: 0;
         }
+        #DFGChartDivId {
+            height: 70vh;
+        }
+        /* #SliderDivId { */
+            /* height: 70vh; */
+        /* } */
+        /* #LineChartDivId { 
+            height: 100%;
+        } */
         #LineChart {
             fill: white;
             width: 100%;
         }
         #DFGChart {
-            width: 100%;
+            width: 80vw;
+            height: 100%;
         }
+        
     </style>
 </head>
 
@@ -51,18 +65,23 @@
 <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script src="dfg/tipsy.js"></script>
 
+<!-- this is for the path and activities sliders -->
+<script src="https://unpkg.com/d3-simple-slider"></script>
 
 <body>
     <h1>Future process visualization</h1>
     <div class="mainView">
-        <div>
-            <h2>DFGChart</h2>
-            <svg id="DFGChart"></svg>
+        <div class='subView'>
+            <div id='DFGChartDivId'>
+                <!-- <h2>DFGChart</h2> -->
+                <svg id="DFGChart"></svg> 
+            </div>
+            <div id='SliderDivId'>  </div>
         </div>
         <!--break to a new row -->
          <!-- <div class="break"></div>  -->
-        <div id = "LineChartDiv">
-            <h2>LineChart</h2>
+        <div id="LineChartDivId">
+            <!-- <h2>LineChart</h2> -->
             <svg id="LineChart"></svg>
         </div>
     </div>
@@ -72,9 +91,5 @@
 <script id="js" src="dfg/main-dfg.js"></script>
 <script src="linechart/multiple-bushes.js"></script>
 <script src="index.js"></script>
-
-<script> 
-
-</script>
-
+<script src="sliders/sliders.js"></script>
 </html>

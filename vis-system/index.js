@@ -53,8 +53,8 @@ d3.csv("bpi12-50-25-25.csv",
     .then( (d,i) => {
         console.log("---------dfg")
         console.log(data)
-        drawDFG(data, config_dfg)
-        drawLineplot(data, config_lineplot)
+        drawDFG(config_dfg, data)
+        drawLineplot(config_lineplot, data)
 
 })
 .catch(function(error){
@@ -65,23 +65,39 @@ d3.csv("bpi12-50-25-25.csv",
 // it then updates the dfg 
 function updateSelection(selections_dates){
     console.log(selections_dates)
+
+    
+
     // filter data    
     // for the case of one brush only
     if (selections_dates.length === 1){
-        new_data_1 = filterDataByDate(selections_dates[0])
+        new_data_1 = filterDataByDate(selections_dates[0]);
+        // initialize the dfg againt
+        config_dfg = configDFG();
+        // remove the previous plot
+        d3.select("#DFGChart").selectAll("*").remove();
+        // draw new plot
+        drawDFG(config_dfg, new_data_1);
+    }
+    else { // here is when two regions are brushed
+        new_data_1 = filterDataByDate(selections_dates[0]);
+        new_data_2 = filterDataByDate(selections_dates[1]);
+
+
+        // now calculate the difference between two datasets to be representeed in dfg
+        diff_data = differenceData(new_data_1, new_data_2);
 
         // initialize the dfg againt
         config_dfg = configDFG();
-
         // remove the previous plot
-        d3.select("#DFGChart").selectAll("*").remove()
+        d3.select("#DFGChart").selectAll("*").remove();
+
         
-        // draw new plot
-        drawDFG(new_data_1, config_dfg)
-    }
-    else { // here is when two regions are brushed
-        // new_data_1 = filterDataByDate(selections_dates[0])
-        // new_data_2 = filterDataByDate(selections_dates[1])
+
+        console.log('difference between calculated');
+
+        drawDFG(config_dfg, new_data_2);
+
 
         // console.log(new_data_1)
         // // initialize the dfg againt
@@ -127,11 +143,28 @@ function filterDataByDate(dates){
         }
         temp.act1 = elem.act1
         temp.act2 = elem.act2
-        temp.technique = elem.technique
+        temp.technique = elem.technique     
         temp.series_sum_each_arc = d3.sum(temp.series)
         temp_data.dfrs.push(temp) 
     }
 
     console.log(temp_data)
     return temp_data;
+}
+
+
+function differenceData(new_data_1, new_data_2){
+    // taking into account that we always compare the first in time with second dataset
+    if (new_data_2.timestamps[0] > new_data_2.timestamps[0]) {
+        return differenceData(new_data_2, new_data_1);
+    } else {
+        for (let i = 0 ; i < new_data_1.dfrs.length ; i += 1){
+            new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_2.dfrs[i].series_sum_each_arc - new_data_1.dfrs[i].series_sum_each_arc;
+            // console.log(new_data_2.dfrs[i].series_sum_each_arc_diff + ' ' + i)
+        }
+
+        console.log(new_data_2);
+        return new_data_2;
+    }
+
 }

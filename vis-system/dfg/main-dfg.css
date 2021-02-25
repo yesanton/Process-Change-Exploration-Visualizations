@@ -11,7 +11,7 @@ text {
   
   .edgePath path {
     stroke: #333;
-    fill: #333;
+    fill: none;
     stroke-width: 1.5px;
   }
   
