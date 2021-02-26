@@ -1,8 +1,5 @@
 // in this file the main system is set up to be running
 
-config_dfg = configDFG();
-config_lineplot = configLineplot()
-
 // let count = 50
 // let count_actual = 25
 let data = {}
@@ -14,6 +11,8 @@ data.count_actual = 25
 // data.dfrs[].act1
 // data.dfrs[].act2
 // data.dfrs[].technique
+// data.dfrs[].series_sum_each_arc -> is the actual dfg relation 
+// data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations 
 data.dfrs = []
 data.series_sum = new Array(data.count).fill(0)// this is for the sum of the time series to build the graph
 
@@ -63,8 +62,8 @@ d3.csv("bpi12-50-25-25.csv",
     .then( (d,i) => {
         console.log("---------dfg")
         console.log(data)
-        drawDFG(config_dfg, data)
-        drawLineplot(config_lineplot, data)
+        drawDFG(data)
+        drawLineplot(data)
 
 })
 .catch(function(error){
@@ -79,33 +78,21 @@ function updateSelection(selections_dates){
     // for the case of one brush only
     if (selections_dates.length === 1){
         filteredData = filterDataByDate(selections_dates[0]);
-        // initialize the dfg againt
-        config_dfg = configDFG();
-        // remove the previous plot
-        d3.select("#DFGChart").selectAll("*").remove();
         // draw new plot
-        drawDFG(config_dfg, filteredData);
+        drawDFG(filteredData);
     }
     else { // here is when two regions are brushed
         let filteredData1 = filterDataByDate(selections_dates[0]);
         let filteredData2 = filterDataByDate(selections_dates[1]);
-
         // now calculate the difference between two datasets to be representeed in dfg
         // diff!
         filteredData = differenceData(filteredData1, filteredData2);
-
-        // initialize the dfg againt
-        config_dfg = configDFG();
-        // remove the previous plot
-        d3.select("#DFGChart").selectAll("*").remove();
-
         console.log('difference between calculated');
-        drawDFG(config_dfg, filteredData);
+        drawDFG(filteredData);
     }
 }
 
 function updatePathAndActivitySliders(pathSlider, activitySlider){
-    
     // here is when path slider is transwered
     if (pathSlider != undefined){
         sliders.path = pathSlider
@@ -118,30 +105,39 @@ function updatePathAndActivitySliders(pathSlider, activitySlider){
     console.log("sliders values:  _------>");
     console.log(sliders);
 
+    if (filteredData === undefined) {
+        updatePathAndActivitySlidersD(data)
+    } else {
+        updatePathAndActivitySlidersD(filteredData)
+    }
+}
 
-    filterDataByPathAndActivitySliders()
+function updatePathAndActivitySlidersD(d) {
+    if (Math.abs(sliders.activity - 1) < 0.01 && Math.abs(sliders.path - 1) < 0.01) {
+        // if both are 1 then nothing to do here just show the original data
+        drawDFG(d);
+    } else if (Math.abs(sliders.activity - 1) < 0.01 && sliders.path < 1) {
+        // if path slider is less than 1 but the activity not we just filter for paths
+        filteredDataPASlider = filterDataByPathSlider(d)
+        
+        console.log('in the PATH SLIDER -<<<<<<<')
+        console.log(filteredDataPASlider)
+        console.log(data)
 
+    } else if (sliders.activity < 0 && Math.abs(sliders.path - 1) < 0.01) {
+        // if activity is less than 1 and path is 1
+        // we only filter for activities
+        filteredDataPASlider = filterDataByActivitySlider(d)
+    } else {
+        // if both activitie and paths should be filtered:
+        // first we filter activities
+        filteredDataPASlider = filterDataByActivitySlider(d)
+        // then we filter paths
+        filteredDataPASlider = filterDataByPathSlider(filteredDataPASlider)
+    }
 
-    // initialize the dfg againt
-    config_dfg = configDFG();
-    // remove the previous plot
-    d3.select("#DFGChart").selectAll("*").remove();
-
-    console.log("filteredDataPASlider:  _------>");
-    console.log(filteredDataPASlider);
-    drawDFG(config_dfg, filteredDataPASlider);
+    drawDFG(filteredDataPASlider);
     delete filteredDataPASlider; 
-
-    // // initialize the dfg againt
-    // config_dfg = configDFG();
-    // // remove the previous plot
-    // d3.select("#DFGChart").selectAll("*").remove();
-
-    // console.log('difference between calculated');
-    // drawDFG(config_dfg, filteredData);
-
-
-
 }
 
 
@@ -201,80 +197,70 @@ function differenceData(new_data_1, new_data_2){
 }
 
 // we filter here for sliders.path and sliders.activity sliders' results
-function filterDataByPathAndActivitySliders(){
-    filteredDataPASlider = {}
-    // filteredDataPASlider final result is stored here
-
+function filterDataByActivitySlider(d) {
+    let filteredBySliders = {}
     // it means that the line chart was brushed
-    if (filteredData != undefined) {
-        if (sliders.path < 1){
-            
-        } 
-    } else if (data != undefined) {
-        let activities_filter = {}
-        console.log('in the filter data by path and slider function')
+    let activities_filter = {}
+    console.log('in the filter data by activityes slider function')
 
-        // first goes filtering with the activities
-        for (let i=0; i < data.dfrs.length ; i+=1){
-            if (data.dfrs[i].act1 in activities_filter) {
-                activities_filter[data.dfrs[i].act1] += data.dfrs[i].series_sum_each_arc; 
-            } else { activities_filter[data.dfrs[i].act1] = data.dfrs[i].series_sum_each_arc }
+    // first goes filtering with the activities
 
-            if (data.dfrs[i].act2 in activities_filter) {
-                activities_filter[data.dfrs[i].act2] += data.dfrs[i].series_sum_each_arc; 
-            } else { activities_filter[data.dfrs[i].act2] = data.dfrs[i].series_sum_each_arc }
-        }
-        // Create items array
-        var activities_filter_array = Object.keys(activities_filter).map(function(key) {
-            return [key, activities_filter[key]];
-        });
-        console.log(activities_filter_array.sort(function(first, second) {
-            return second[1] - first[1];
-        })) 
-        // this will only leave the right number of elements
-        activities_filter_array = activities_filter_array.slice(0, Math.round(sliders.activity * activities_filter_array.length))
-        activities_filter = new Set(activities_filter_array.map(function(key) {return key[0]}))
-
-        let temp_dfrs = []
-        for (let i = 0 ; i < data.dfrs.length ; i += 1) { 
-            if (
-                (activities_filter.has(data.dfrs[i].act1)) || 
-                (activities_filter.has(data.dfrs[i].act2))
-                ){
-                // console.log('===============================')
-                // console.log(data.dfrs[i].act1)
-                // console.log(data.dfrs[i].act2)
-                    temp_dfrs.push(data.dfrs[i])
-            }
+    // this loop collects activities that are exectuted alongsize with the cordinalities 
+    for (let i=0; i < d.dfrs.length ; i+=1){
+        if (d.dfrs[i].act1 in activities_filter) {
+            activities_filter[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
+        } else { 
+            activities_filter[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
         }
 
-        // console.log(activities_filter)
-
-        // console.log(activities_filter.has('end'))
-        // console.log('------ ------ ------ ------- -------- --------')
-        // console.log(temp_dfrs)
-
-        //save in the new variable 
-        filteredDataPASlider.count = data.count
-        filteredDataPASlider.count_actual = data.count_actual
-        filteredDataPASlider.timestamps = data.timestamps
-        filteredDataPASlider.series_sum = data.series_sum
-        filteredDataPASlider.dfrs = temp_dfrs
-        
-        // here goes filtering with the paths
-        filteredDataPASlider.dfrs.sort(function(first, second) {
-            return second.series_sum_each_arc - first.series_sum_each_arc;
-        })
-        filteredDataPASlider.dfrs = filteredDataPASlider.dfrs.slice(0, Math.round(sliders.path * filteredDataPASlider.dfrs.length))
-
-
-    
-      
-
-        
-
-        
+        if (d.dfrs[i].act2 in activities_filter) {
+            activities_filter[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
+        } else { 
+            activities_filter[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
+        }
     }
+    // Create items array
+    var activities_filter_array = Object.keys(activities_filter).map(function(key) {
+        return [key, activities_filter[key]];
+    });
+    // after sorting one can see which activities are used the most and which the least.
+    activities_filter_array.sort(function(first, second) {
+        return second[1] - first[1];
+    }) 
+    // this will only leave the right number of elements
+    activities_filter_array = activities_filter_array.slice(0, Math.round(sliders.activity * activities_filter_array.length))
+    activities_filter = new Set(activities_filter_array.map(function(key) {return key[0]}))
 
+    // we take all those arcs that both of the activities that the arc is connecting are in our list of prioritized activities
+    let temp_dfrs = []
+    for (let i = 0 ; i < d.dfrs.length ; i += 1) { 
+        if ((activities_filter.has(d.dfrs[i].act1)) && 
+            (activities_filter.has(d.dfrs[i].act2))){
+                temp_dfrs.push(d.dfrs[i])
+        }
+    }
+    //save in the new variable 
+    filteredBySliders.count = d.count
+    filteredBySliders.count_actual = d.count_actual
+    filteredBySliders.timestamps = d.timestamps
+    filteredBySliders.series_sum = d.series_sum
+    filteredBySliders.dfrs = temp_dfrs
+    return filteredBySliders;
+}
 
+function filterDataByPathSlider(d) {
+    let filteredBySliders = {}
+    // here goes filtering with the paths
+    d.dfrs.sort(function(first, second) {
+        return second.series_sum_each_arc - first.series_sum_each_arc;
+    })    
+    temp_dfrs = d.dfrs.slice(0, Math.round(sliders.path * d.dfrs.length))
+
+    filteredBySliders.count = d.count
+    filteredBySliders.count_actual = d.count_actual
+    filteredBySliders.timestamps = d.timestamps
+    filteredBySliders.series_sum = d.series_sum
+    filteredBySliders.dfrs = temp_dfrs
+    return filteredBySliders;
+  
 }

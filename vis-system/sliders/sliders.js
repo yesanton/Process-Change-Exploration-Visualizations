@@ -10,6 +10,7 @@ var pathSlider = d3
     .height('400')
     .tickFormat(d3.format('.0%'))
     .ticks(2)
+    .default(1)
     .displayValue(true)
     .on('onchange', (valPath) => {
         // do somethng with the value 
@@ -19,6 +20,7 @@ var pathSlider = d3
 var activitySlider = d3
     .sliderVertical()
     .min(0)
+    .default(1)
     .max(1)
     .step(0.01)
     .width(300)

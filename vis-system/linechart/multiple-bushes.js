@@ -34,7 +34,9 @@ function configLineplot(){
 }
 
 
-function drawLineplot(config_lineplot,data){
+function drawLineplot(data){
+  config_lineplot = configLineplot()
+
   console.log ("data from line chart")
   data_for_line_chart = []
   for (let i = 0 ; i < data.timestamps.length ; i++){
