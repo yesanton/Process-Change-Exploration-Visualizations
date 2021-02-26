@@ -88,7 +88,11 @@ function updateSelection(selections_dates){
         // diff!
         filteredData = differenceData(filteredData1, filteredData2);
         console.log('difference between calculated');
-        drawDFG(filteredData);
+
+        // in case the path and activity sliders are also not in their default 
+        // perform those filters and :
+        updatePathAndActivitySlidersD(filteredData);
+        // drawDFG(filteredData);
     }
 }
 
@@ -116,28 +120,31 @@ function updatePathAndActivitySlidersD(d) {
     if (Math.abs(sliders.activity - 1) < 0.01 && Math.abs(sliders.path - 1) < 0.01) {
         // if both are 1 then nothing to do here just show the original data
         drawDFG(d);
-    } else if (Math.abs(sliders.activity - 1) < 0.01 && sliders.path < 1) {
-        // if path slider is less than 1 but the activity not we just filter for paths
-        filteredDataPASlider = filterDataByPathSlider(d)
-        
-        console.log('in the PATH SLIDER -<<<<<<<')
-        console.log(filteredDataPASlider)
-        console.log(data)
-
-    } else if (sliders.activity < 0 && Math.abs(sliders.path - 1) < 0.01) {
-        // if activity is less than 1 and path is 1
-        // we only filter for activities
-        filteredDataPASlider = filterDataByActivitySlider(d)
     } else {
-        // if both activitie and paths should be filtered:
-        // first we filter activities
-        filteredDataPASlider = filterDataByActivitySlider(d)
-        // then we filter paths
-        filteredDataPASlider = filterDataByPathSlider(filteredDataPASlider)
-    }
+        if (Math.abs(sliders.activity - 1) < 0.01 && sliders.path < 1) {
+            // if path slider is less than 1 but the activity not we just filter for paths
+            filteredDataPASlider = filterDataByPathSlider(d)
+            
+            console.log('in the PATH SLIDER -<<<<<<<')
+            console.log(filteredDataPASlider)
+            console.log(data)
 
-    drawDFG(filteredDataPASlider);
-    delete filteredDataPASlider; 
+        } else if (sliders.activity < 0 && Math.abs(sliders.path - 1) < 0.01) {
+            // if activity is less than 1 and path is 1
+            // we only filter for activities
+            filteredDataPASlider = filterDataByActivitySlider(d)
+        } else {
+            // if both activitie and paths should be filtered:
+            // first we filter activities
+            filteredDataPASlider = filterDataByActivitySlider(d)
+            // then we filter paths
+            filteredDataPASlider = filterDataByPathSlider(filteredDataPASlider)
+        }
+        
+        drawDFG(filteredDataPASlider);
+
+        delete filteredDataPASlider; 
+    }
 }
 
 
