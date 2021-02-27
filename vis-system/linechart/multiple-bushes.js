@@ -1,4 +1,4 @@
-function configLineplot(){
+function configLineplot(separate_at){
   var margin = {
     top: 10,
     right: 10,
@@ -30,12 +30,14 @@ function configLineplot(){
   config.height = height;
   config.margin = margin;
 
+  config.separate_at = separate_at
+
   return config
 }
 
 
-function drawLineplot(data){
-  config_lineplot = configLineplot()
+function drawLineplot(data, separate_at){
+  config_lineplot = configLineplot(separate_at)
 
   console.log ("data from line chart")
   data_for_line_chart = []
@@ -65,11 +67,29 @@ function drawLineplot(data){
   config_lineplot.svg.append("g")
     .call(d3.axisLeft(y));
 
+/////////////// experimental
+  // here we will color different color of the past and the predicted area on the area chart
+
+  // colors are taken from here
+  // https://en.wikipedia.org/wiki/Grey#:~:text=In%20Europe%20and%20North%20America,it%20as%20their%20favorite%20color.
+
+  // idea of using gradient from here:
+  // https://stackoverflow.com/questions/19114896/d3-js-chart-area-filling-with-different-colors
+  var grad = config_lineplot.svg.append("defs")
+    .append("linearGradient")
+    .attr("id", "grad");
+      grad.append("stop").attr("offset", "0%").attr("stop-color", "#69b3a2");
+      grad.append("stop").attr("offset", Math.round(config_lineplot.separate_at* 100) + '%').attr("stop-color", "#69b3a2");
+      grad.append("stop").attr("offset", Math.round(config_lineplot.separate_at* 100) + '%').attr("stop-color", "silver");
+      grad.append("stop").attr("offset", "100%").attr("stop-color", "silver"); 
+
+
   // Add the area
   config_lineplot.svg.append("path")
     .datum(data_for_line_chart)
-    .attr("fill", "#cce5df")
-    .attr("stroke", "#69b3a2")
+    .attr("fill", "url(#grad)")
+    // .attr("fill", "#cce5df")
+    .attr("stroke", "url(#grad)")
     .attr("stroke-width", 1.5) 
     .attr("d", d3.area()
       .x(function(d) { return x(d.date) })

@@ -1,5 +1,5 @@
 // function to initialize the dfg graph
-function configDFG(){
+function configDFG(data){
     // Create a new directed graph
     var g = new dagreD3.graphlib.Graph().setGraph({});
     g.graph().rankSep = 10; 
@@ -13,6 +13,22 @@ function configDFG(){
     config.g = g
     config.threshold_arc_min = 10
     config.threshold_arc_diff_min = 10
+
+    console.log(Object.keys(data.activities_importance))
+
+    let temp_activities_importance = Object.keys(data.activities_importance).map(function(key){
+        return data.activities_importance[key];
+    })
+    config.node_color_scale = d3.scaleLinear().domain([d3.min(temp_activities_importance),d3.max(temp_activities_importance)])
+                                              .range(["white", "green"])
+
+
+    let t = data.dfrs.map(i => i.series_sum_each_arc)
+    console.log("t!________________________")
+    
+    console.log(t)
+    config.edge_size_scale = d3.scaleLinear().domain([d3.min(t),d3.max(t)])
+                            .range([1, 4])
     return config;
 }
 
@@ -20,7 +36,7 @@ function configDFG(){
 //function to draw dfg on 
 function drawDFG(data){     
     // initialize the dfg againt
-    config_dfg = configDFG();
+    config_dfg = configDFG(data);
     // remove the previous plot
     d3.select("#DFGChart").selectAll("*").remove();
 
@@ -49,7 +65,7 @@ function drawDFG(data){
                             labelStyle: 'stroke: green',
                             label: round_and_to_string(temp_sum) + ' ↑' + round_and_to_string(temp_sum_diff),
                             // additional options possible
-                            style: "stroke: green; stroke-width: 3px;"// stroke-dasharray: 5, 5;",
+                            style: "stroke: green; stroke-width: " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;" // stroke-dasharray: 5, 5;",
                             ,arrowheadStyle: "fill: green"
                         })
                 } 
@@ -66,7 +82,7 @@ function drawDFG(data){
                                         + ' ↓' 
                                         + round_and_to_string(temp_sum_diff),
                             // additional options possible
-                            style: "stroke: #f66; stroke-width: 3px;", 
+                            style: "stroke: #f66; " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
                             arrowheadStyle: "fill: #f66"
                             
                         })
@@ -74,7 +90,10 @@ function drawDFG(data){
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
                             curve: d3.curveBasis, // cuvre the edges
-                            label: round_and_to_string(temp_sum)
+                            label: round_and_to_string(temp_sum),
+                            style: "stroke-width: " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
+                            arrowheadStyle: "fill: black"
+
                         })
                 }
             } else {
@@ -82,6 +101,8 @@ function drawDFG(data){
                     {
                         curve: d3.curveBasis, // cuvre the edges
                         label: round_and_to_string(temp_sum),
+                        style: "stroke-width: " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
+                        arrowheadStyle: "fill: black"
                         //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
                         // arrowheadStyle: "fill: #f66" 
                         // additional options possible
@@ -101,10 +122,15 @@ function drawDFG(data){
     }
     
     // Add states to the graph, set labels, and style
+    console.log('here we draw nodes! --->')
+    console.log(data)
+    console.log(states)
     Object.keys(states).forEach(function(state) {
         var value = states[state];
         value.label = state;
         value.rx = value.ry = 5;
+        value.style = "fill: " + config_dfg.node_color_scale(data.activities_importance[state]);
+        console.log( config_dfg.node_color_scale(value.label))
         config_dfg.g.setNode(state, value);
     });
     delete states;

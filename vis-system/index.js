@@ -15,6 +15,7 @@ data.count_actual = 25
 // data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations 
 data.dfrs = []
 data.series_sum = new Array(data.count).fill(0)// this is for the sum of the time series to build the graph
+data.activities_importance = {} // this will be used to colr the activities, and to filter the activities with activities slider
 
 // the result of brushed region and filtering and differencing (when available) is stored here
 let filteredData;
@@ -62,8 +63,11 @@ d3.csv("bpi12-50-25-25.csv",
     .then( (d,i) => {
         console.log("---------dfg")
         console.log(data)
+
+        data = calculateActivitiesImportance(data)
+        
         drawDFG(data)
-        drawLineplot(data)
+        drawLineplot(data, data.count_actual / data.count)
 
 })
 .catch(function(error){
@@ -180,6 +184,8 @@ function filterDataByDate(dates){
         temp.technique = elem.technique     
         temp.series_sum_each_arc = d3.sum(temp.series)
         temp_data.dfrs.push(temp) 
+        temp_data.activities_importance = data.activities_importance
+        
     }
 
     console.log(temp_data)
@@ -207,28 +213,30 @@ function differenceData(new_data_1, new_data_2){
 function filterDataByActivitySlider(d) {
     let filteredBySliders = {}
     // it means that the line chart was brushed
-    let activities_filter = {}
     console.log('in the filter data by activityes slider function')
 
     // first goes filtering with the activities
 
-    // this loop collects activities that are exectuted alongsize with the cordinalities 
-    for (let i=0; i < d.dfrs.length ; i+=1){
-        if (d.dfrs[i].act1 in activities_filter) {
-            activities_filter[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
-        } else { 
-            activities_filter[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
-        }
+    // // this loop collects activities that are exectuted alongsize with the cordinalities 
+    // for (let i=0; i < d.dfrs.length ; i+=1){
+    //     if (d.dfrs[i].act1 in activities_filter) {
+    //         activities_filter[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
+    //     } else { 
+    //         activities_filter[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
+    //     }
 
-        if (d.dfrs[i].act2 in activities_filter) {
-            activities_filter[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
-        } else { 
-            activities_filter[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
-        }
-    }
+    //     if (d.dfrs[i].act2 in activities_filter) {
+    //         activities_filter[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
+    //     } else { 
+    //         activities_filter[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
+    //     }
+    // }
+
+    d = calculateActivitiesImportance(d)
+
     // Create items array
-    var activities_filter_array = Object.keys(activities_filter).map(function(key) {
-        return [key, activities_filter[key]];
+    var activities_filter_array = Object.keys(d.activities_importance).map(function(key) {
+        return [key, d.activities_importance[key]];
     });
     // after sorting one can see which activities are used the most and which the least.
     activities_filter_array.sort(function(first, second) {
@@ -236,13 +244,13 @@ function filterDataByActivitySlider(d) {
     }) 
     // this will only leave the right number of elements
     activities_filter_array = activities_filter_array.slice(0, Math.round(sliders.activity * activities_filter_array.length))
-    activities_filter = new Set(activities_filter_array.map(function(key) {return key[0]}))
+    let set_activities_filter = new Set(activities_filter_array.map(function(key) {return key[0]}))
 
     // we take all those arcs that both of the activities that the arc is connecting are in our list of prioritized activities
     let temp_dfrs = []
     for (let i = 0 ; i < d.dfrs.length ; i += 1) { 
-        if ((activities_filter.has(d.dfrs[i].act1)) && 
-            (activities_filter.has(d.dfrs[i].act2))){
+        if ((set_activities_filter.has(d.dfrs[i].act1)) && 
+            (set_activities_filter.has(d.dfrs[i].act2))){
                 temp_dfrs.push(d.dfrs[i])
         }
     }
@@ -252,6 +260,7 @@ function filterDataByActivitySlider(d) {
     filteredBySliders.timestamps = d.timestamps
     filteredBySliders.series_sum = d.series_sum
     filteredBySliders.dfrs = temp_dfrs
+    filteredBySliders.activities_importance = d.activities_importance
     return filteredBySliders;
 }
 
@@ -268,6 +277,28 @@ function filterDataByPathSlider(d) {
     filteredBySliders.timestamps = d.timestamps
     filteredBySliders.series_sum = d.series_sum
     filteredBySliders.dfrs = temp_dfrs
+    filteredBySliders.activities_importance = d.activities_importance
     return filteredBySliders;
   
+}
+
+
+function calculateActivitiesImportance(d){
+    // this loop collects activities that are exectuted alongsize with the cordinalities 
+    for (let i=0; i < d.dfrs.length ; i+=1){
+        if (d.dfrs[i].act1 in d.activities_importance) {
+            d.activities_importance[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
+        } else { 
+            d.activities_importance[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
+        }
+
+        if (d.dfrs[i].act2 in d.activities_importance) {
+            d.activities_importance[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
+        } else { 
+            d.activities_importance[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
+        }
+    }
+    console.log('1111111111111111111111111111111111111111111111111111111111')
+
+    return d
 }
