@@ -14,7 +14,13 @@ var pathSlider = d3
     .displayValue(true)
     .on('onchange', (valPath) => {
         // do somethng with the value 
-        updatePathAndActivitySliders(valPath, undefined);
+        updatePathAndActivitySliders(
+            // scaless are used in order to allow for the lower values of the percentage
+            // to still have some paths and activities
+            d3.scaleLinear()   
+                .domain([0, 1]) // unit: km
+                .range([0.1, 1])(valPath), 
+            undefined);
     });
 
 var activitySlider = d3
@@ -30,7 +36,12 @@ var activitySlider = d3
     .displayValue(true)
     .on('onchange', (valActivity) => {
         // do something with the value 
-        updatePathAndActivitySliders(undefined, valActivity);
+        
+        updatePathAndActivitySliders(undefined, 
+            d3.scaleLinear()   
+                .domain([0, 1]) // unit: km
+                .range([0.1, 1])(valActivity)
+            );
     });
 
 let pathSliderSvg = d3.select('#SliderDivId')
