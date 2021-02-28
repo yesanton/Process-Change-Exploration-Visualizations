@@ -1,13 +1,16 @@
 // for further help with sliders, documentation is here https://github.com/johnwalley/d3-simple-slider
 
 console.log('in the making slider code')
+
+div_sizes = document.getElementById('SliderDivId1').getBoundingClientRect()
+
 var pathSlider = d3
     .sliderVertical()
     .min(0)
     .max(1)
     .step(0.01)
-    .width(300)
-    .height('400')
+    .width(div_sizes.width)
+    .height(div_sizes.height - 0.15 * div_sizes.height)
     .tickFormat(d3.format('.0%'))
     .ticks(2)
     .default(1)
@@ -29,9 +32,9 @@ var activitySlider = d3
     .default(1)
     .max(1)
     .step(0.01)
-    .width(300)
+    .width(div_sizes.width)
+    .height(div_sizes.height - 0.15 * div_sizes.height)
     .ticks(2)
-    .height(400)
     .tickFormat(d3.format('.0%'))
     .displayValue(true)
     .on('onchange', (valActivity) => {
@@ -44,10 +47,15 @@ var activitySlider = d3
             );
     });
 
-let pathSliderSvg = d3.select('#SliderDivId')
-    .append('svg')
-    .attr('width', '6vw')
-    .attr('height', "70vh")
+console.log('------------->')
+console.log(document.getElementById('SliderDivId1').getBoundingClientRect())
+
+
+
+let pathSliderSvg = d3.select('#SliderId1')
+    // .append('svg')
+    .attr('width', div_sizes.width)
+    .attr('height', div_sizes.height)
     pathSliderSvg
     .append('g')
     .attr('transform', 'translate(60,30)')
@@ -55,10 +63,10 @@ let pathSliderSvg = d3.select('#SliderDivId')
 pathSliderSvg.append('g').attr('transform', 'translate(0,10)').append('text').text('Path slider')
 
 
-let activitySliderSvg = d3.select('#SliderDivId')
-    .append('svg')
-    .attr('width', '6vw')
-    .attr('height', "70vh")
+let activitySliderSvg = d3.select('#SliderId2')
+    // .append('svg')
+    .attr('width', div_sizes.width)
+    .attr('height', div_sizes.height)
     activitySliderSvg
     .append('g')
     .attr('transform', 'translate(60,30)')

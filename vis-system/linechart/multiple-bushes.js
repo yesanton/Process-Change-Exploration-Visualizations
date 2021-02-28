@@ -5,8 +5,11 @@ function configLineplot(separate_at){
     bottom: 30,
     left: 40
   },
-  width = 960 - margin.left - margin.right,
-  height = 150 - margin.top - margin.bottom;
+
+  div_sizes = document.getElementById('LineChart').getBoundingClientRect()
+
+  width = div_sizes.width - margin.left - margin.right,
+  height = div_sizes.height - margin.top - margin.bottom;
 
   var svg = d3.select("#LineChart").append("svg")
   .attr("width", width + margin.left + margin.right)

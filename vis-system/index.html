@@ -5,7 +5,7 @@
             font-family: Helvetica, Arial, sans-serif;
         }
 
-        h1 {
+        h2 {
             background-color: #2a5599;
             color: white;
             padding: 5px;
@@ -19,12 +19,15 @@
           display: flex; /* or inline-flex  https://css-tricks.com/snippets/css/a-guide-to-flexbox/ */
           flex-flow: column;
           width: 98vw;
+          height: 100vh;
           /* flex-wrap: wrap;   */
         
         }
         .subView {
             display: flex;
             flex-flow: row;
+            width: 98vw;
+            height: 70vh;
         }
         /* - Use the "display flex" feature from to show the items from class `mainView` side by side  */
 
@@ -33,24 +36,25 @@
             flex-basis: 100%;
             height: 0;
         }
-        #DFGChartDivId {
-            height: 70vh;
-        }
-        /* #SliderDivId { */
-            /* height: 70vh; */
-        /* } */
-        /* #LineChartDivId { 
-            height: 100%;
+        /* #DFGChartDivId {
+            height: 84vh;
         } */
+        #DFGChart {
+            width: 82vw;
+            height: 100%;
+        }
+        /* this will also be used for both of the sliders, so to calculate real width taken multiply by two */
+        #SliderId1 {
+            width: 8vw;
+            height: 100%;
+        }
         #LineChart {
             fill: white;
-            width: 100%;
+            width: 98vw;
         }
-        #DFGChart {
-            width: 80vw;
-            height: 100%;
-        }
-        
+       
+       
+
     </style>
 </head>
 
@@ -69,14 +73,12 @@
 <script src="https://unpkg.com/d3-simple-slider"></script>
 
 <body>
-    <h1>Future process visualization</h1>
+    <h2>Future process visualization</h2>
     <div class="mainView">
         <div class='subView'>
-            <div id='DFGChartDivId'>
-                <!-- <h2>DFGChart</h2> -->
-                <svg id="DFGChart"></svg> 
-            </div>
-            <div id='SliderDivId'>  </div>
+            <div id='DFGChartDivId'> <svg id="DFGChart"></svg> </div>
+            <div id='SliderDivId1'> <svg id="SliderId1"></svg> </div>
+            <div id='SliderDivId2'> <svg id="SliderId2"></svg> </div>
         </div>
         <!--break to a new row -->
          <!-- <div class="break"></div>  -->
