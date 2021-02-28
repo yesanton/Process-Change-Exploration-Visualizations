@@ -8,11 +8,6 @@ function configLineplot(separate_at){
   width = 960 - margin.left - margin.right,
   height = 150 - margin.top - margin.bottom;
 
-  // let container = d3.select('#AirlinesChart') //TODO: use d3.select to select the element with id AirlinesChart 
-  // container
-  //     .attr("width", width)
-  //     .attr('height', height)
-
   var svg = d3.select("#LineChart").append("svg")
   .attr("width", width + margin.left + margin.right)
   .attr("height", height + margin.top + margin.bottom)
@@ -130,29 +125,20 @@ function drawLineplot(data, separate_at){
     };
 
     function brushed() {
-      // we only work with two brushes, in case more needed, update this part
-      let selections = []
-
-      for (let i of brushes){
-        console.log('here in brushes')
-        console.log(i)
-
-        let brushID0 = i.id;
-        console.log(brushID0)
-        let brush0 = document.getElementById('brush-' + brushID0);
-        
-        let temp = d3.brushSelection(brush0)
-        console.log(temp)
-        if (temp){
-          let t1 = x.invert(temp[0])
-          let t2 = x.invert(temp[1])
-          selections.push([t1,t2])
+      s1 = d3.selectAll("#brush-1 .selection")
+      if (s1.empty()) {
+        // noithing is found in the second selection
+        d3.selectAll("#brush-0 .selection").attr('fill', '#91A84C')
+      } else {
+        if (d3.brushSelection(document.getElementById('brush-1'))[0] < 
+            d3.brushSelection(document.getElementById('brush-0'))[0]) {
+          d3.selectAll("#brush-0 .selection").attr('fill', '#323D48')
+          d3.selectAll("#brush-1 .selection").attr('fill', '#91A84C')
+        } else {
+          d3.selectAll("#brush-1 .selection").attr('fill', '#323D48')
+          d3.selectAll("#brush-0 .selection").attr('fill', '#91A84C')
         }
-        
-      }      
-      updateSelection(selections)
-
-      // your stuff here
+      }
     }
 
     function brushend() {
@@ -168,8 +154,28 @@ function drawLineplot(data, separate_at){
         }
       }
 
+
       // Always draw brushes
       drawBrushes();
+
+      // we only work with two brushes, in case more needed, update this part
+      // this part of the code is responsible for invoking the update of the other parts of the chart
+      let selections = []
+
+      for (let i of brushes){
+        let brushID0 = i.id;
+        console.log(brushID0)
+        let brush0 = document.getElementById('brush-' + brushID0);
+        
+        let temp = d3.brushSelection(brush0)
+        console.log(temp)
+        if (temp){
+          let t1 = x.invert(temp[0])
+          let t2 = x.invert(temp[1])
+          selections.push([t1,t2])
+        }
+      }      
+      updateSelection(selections)
     }
   }
 
@@ -186,8 +192,8 @@ function drawLineplot(data, separate_at){
       .each(function(brushObject) {
         //call the brush
         brushObject.brush(d3.select(this));
-      });
-
+      });    
+      
   /* REMOVE POINTER EVENTS ON BRUSH OVERLAYS
   *
   * This part is abbit tricky and requires knowledge of how brushes are implemented.
@@ -208,7 +214,7 @@ function drawLineplot(data, separate_at){
             } else {
               return 'none';
             }
-          });
+          })
       })
 
     brushSelection.exit()
