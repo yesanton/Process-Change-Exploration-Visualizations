@@ -75,6 +75,7 @@ function drawDFG(data){
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
                             curve: d3.curveBasis, // cuvre the edges
+                            labelStyle: 'stroke: ' + colors["edge_past"],
                             label: round_and_to_string(temp_sum)
                                         + ' ↓' 
                                         + round_and_to_string(temp_sum_diff),
@@ -124,7 +125,7 @@ function drawDFG(data){
     console.log(states)
     Object.keys(states).forEach(function(state) {
         var value = states[state];
-        value.label = state;
+        value.label = state + " (" + Math.round(data.activities_importance[state]) + ")";
         value.rx = value.ry = 5;
         value.style = "fill: " + config_dfg.node_color_scale(data.activities_importance[state]);
         config_dfg.g.setNode(state, value);

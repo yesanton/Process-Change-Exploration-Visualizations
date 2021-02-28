@@ -26,13 +26,10 @@ data.activities_importance = {} // this will be used to colr the activities, and
 
 // the result of brushed region and filtering and differencing (when available) is stored here
 let filteredData;
-
 // this is even further filtered data that is under the path and activity slider filtering 
 let filteredDataPASlider = {};
-
 // store value of the activity and path sliders here sliders.activity, sliders.path
 let sliders = {path: 1, activity: 1}
-
 
 d3.csv("bpi12-50-25-25.csv",
   // When reading the csv, I must format variables:
@@ -49,7 +46,7 @@ d3.csv("bpi12-50-25-25.csv",
             data.timestamps = timestamps;
             // return timestamps
         }
-        if (i > 1) {
+        else {
             temp = []
             temp.series = []
             for (let j = 0 ; j < data.count ; j+=1){
@@ -60,6 +57,7 @@ d3.csv("bpi12-50-25-25.csv",
             }
             temp.act1 = d.act1
             temp.act2 = d.act2
+            console.log(temp.act1 + "  "+ temp.act2)
             temp.technique = d.technique
             // add comdined info about the arcs
             temp.series_sum_each_arc = d3.sum(temp.series)
@@ -91,9 +89,7 @@ function updateSelection(selections_dates){
         filteredData = filterDataByDate(selections_dates[0]);
         // draw new plot
         // drawDFG(filteredData);
-
         updatePathAndActivitySlidersD(filteredData);
-        
     }
     else { // here is when two regions are brushed
         let filteredData1 = filterDataByDate(selections_dates[0]);
@@ -205,9 +201,13 @@ function filterDataByDate(dates){
         temp.technique = elem.technique     
         temp.series_sum_each_arc = d3.sum(temp.series)
         temp_data.dfrs.push(temp) 
-        temp_data.activities_importance = data.activities_importance
         
+
     }
+
+    console.log(temp_data)
+    temp_data.activities_importance = {}
+    temp_data = calculateActivitiesImportance(temp_data)
 
     console.log(temp_data)
     return temp_data;
@@ -301,18 +301,18 @@ function filterDataByPathSlider(d) {
 
 function calculateActivitiesImportance(d){
     // this loop collects activities that are exectuted alongsize with the cordinalities 
+    
     for (let i=0; i < d.dfrs.length ; i+=1){
         if (d.dfrs[i].act1 in d.activities_importance) {
             d.activities_importance[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
         } else { 
             d.activities_importance[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
         }
-
-        if (d.dfrs[i].act2 in d.activities_importance) {
-            d.activities_importance[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
-        } else { 
-            d.activities_importance[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
-        }
+        // if (d.dfrs[i].act2 in d.activities_importance) {
+        //     d.activities_importance[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
+        // } else { 
+        //     d.activities_importance[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
+        // }
     }
     console.log('1111111111111111111111111111111111111111111111111111111111')
 
