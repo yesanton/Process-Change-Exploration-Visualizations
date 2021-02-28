@@ -159,8 +159,29 @@ function drawDFG(data){
         .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true}); });
     
     // Center the graph
-    var initialScale = 0.2;
-    svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - config_dfg.g.graph().width * initialScale) / 2, 20).scale(initialScale));
+    
+    
+    let width_dfg = document.getElementById('DFGChart').getBoundingClientRect().width
+    
+    // this is the real height of the svg box
+    let height_dfg_svg_box = document.getElementById('DFGChart').getBoundingClientRect().height;
+    // this is the size of the graph inside of svg
+    let height_dfg_actual = config_dfg.g.graph().height;
+    // we scale the atual svg to the box that we have on the screen
+    // 10 stands for padding (5 at the top will be taken, and 5 for the bottom)
+    let initialScale = (height_dfg_svg_box - 20) / height_dfg_actual; 
+    initialScale = initialScale < 0.9? initialScale : 0.9
+
+    console.log(height_dfg_svg_box)
+    console.log(height_dfg_actual)
+    svg.call(zoom.transform, d3.zoomIdentity.translate((width_dfg - config_dfg.g.graph().width * initialScale) / 2, 10).scale(initialScale));
+    console.log("!!!!!!!!!!!!!@@@@@@@@@@@  " )
+    height_dfg_svg_box = document.getElementById('DFGChart').getBoundingClientRect().height;
+    height_dfg_actual = config_dfg.g.graph().height;
+    console.log(height_dfg_svg_box)
+    console.log(height_dfg_actual)
+
+    
     // svg.attr('height', config_dfg.g.graph().height * initialScale + 40);
 }
 
