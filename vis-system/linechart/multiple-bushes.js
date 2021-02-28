@@ -128,15 +128,15 @@ function drawLineplot(data, separate_at){
       s1 = d3.selectAll("#brush-1 .selection")
       if (s1.empty()) {
         // noithing is found in the second selection
-        d3.selectAll("#brush-0 .selection").attr('fill', '#91A84C')
+        d3.selectAll("#brush-0 .selection").attr('fill', colors["edge_neutral"])
       } else {
         if (d3.brushSelection(document.getElementById('brush-1'))[0] < 
             d3.brushSelection(document.getElementById('brush-0'))[0]) {
-          d3.selectAll("#brush-0 .selection").attr('fill', '#323D48')
-          d3.selectAll("#brush-1 .selection").attr('fill', '#91A84C')
+          d3.selectAll("#brush-1 .selection").attr('fill', colors["edge_past"])
+          d3.selectAll("#brush-0 .selection").attr('fill', colors["edge_future"])
         } else {
-          d3.selectAll("#brush-1 .selection").attr('fill', '#323D48')
-          d3.selectAll("#brush-0 .selection").attr('fill', '#91A84C')
+          d3.selectAll("#brush-0 .selection").attr('fill', colors["edge_past"])
+          d3.selectAll("#brush-1 .selection").attr('fill', colors["edge_future"])
         }
       }
     }

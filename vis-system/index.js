@@ -1,5 +1,12 @@
 // in this file the main system is set up to be running
 
+let colors = {
+    edge_past: '#f66',
+    edge_future: 'green', 
+    edge_neutral: 'black'
+}
+// colors.edge_past = '#f66'
+// colors.edge_future = 'green'
 // let count = 50
 // let count_actual = 25
 let data = {}
@@ -83,14 +90,28 @@ function updateSelection(selections_dates){
     if (selections_dates.length === 1){
         filteredData = filterDataByDate(selections_dates[0]);
         // draw new plot
-        drawDFG(filteredData);
+        // drawDFG(filteredData);
+
+        updatePathAndActivitySlidersD(filteredData);
+        
     }
     else { // here is when two regions are brushed
         let filteredData1 = filterDataByDate(selections_dates[0]);
         let filteredData2 = filterDataByDate(selections_dates[1]);
         // now calculate the difference between two datasets to be representeed in dfg
         // diff!
-        filteredData = differenceData(filteredData1, filteredData2);
+
+
+        if (filteredData1.timestamps[0] < filteredData2.timestamps[0]){
+            console.log(filteredData1.timestamps[0])
+            console.log(filteredData2.timestamps[0])
+            console.log('======================================')
+            filteredData = differenceData(filteredData1, filteredData2);
+        } else {
+            filteredData = differenceData(filteredData2, filteredData1);
+        }
+
+        
         console.log('difference between calculated');
 
         // in case the path and activity sliders are also not in their default 
@@ -195,19 +216,14 @@ function filterDataByDate(dates){
 
 function differenceData(new_data_1, new_data_2){
     // taking into account that we always compare the first in time with second dataset
-    if (new_data_2.timestamps[0] > new_data_2.timestamps[0]) {
-        return differenceData(new_data_2, new_data_1);
-    } else {
-        for (let i = 0 ; i < new_data_1.dfrs.length ; i += 1){
-            new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_2.dfrs[i].series_sum_each_arc - new_data_1.dfrs[i].series_sum_each_arc;
-            // console.log(new_data_2.dfrs[i].series_sum_each_arc_diff + ' ' + i)
-        }
-
-        console.log(new_data_2);
-        return new_data_2;
+    for (let i = 0 ; i < new_data_1.dfrs.length ; i += 1){
+        new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_2.dfrs[i].series_sum_each_arc - new_data_1.dfrs[i].series_sum_each_arc;
     }
 
+    console.log(new_data_2);
+    return new_data_2;
 }
+
 
 // we filter here for sliders.path and sliders.activity sliders' results
 function filterDataByActivitySlider(d) {

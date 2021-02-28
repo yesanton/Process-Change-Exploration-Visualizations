@@ -35,15 +35,12 @@ function configDFG(data){
 
 //function to draw dfg on 
 function drawDFG(data){     
+
     // initialize the dfg againt
     config_dfg = configDFG(data);
     // remove the previous plot
     d3.select("#DFGChart").selectAll("*").remove();
-
-    console.log("data:  _------>");
-    console.log(data)
-    console.log("dfg drawing start")
-
+    
     let states = {}
     for (let j = 0 ; j < data.dfrs.length ; j+= 1){
         states[data.dfrs[j].act1] = {
@@ -62,18 +59,18 @@ function drawDFG(data){
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
                             curve: d3.curveBasis, // cuvre the edges
-                            labelStyle: 'stroke: green',
+                            labelStyle: 'stroke: ' + colors["edge_future"],
                             label: round_and_to_string(temp_sum) + ' ↑' + round_and_to_string(temp_sum_diff),
                             // additional options possible
                             style: "stroke: green; stroke-width: " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;" // stroke-dasharray: 5, 5;",
-                            ,arrowheadStyle: "fill: green"
+                            ,arrowheadStyle: "fill: " + colors["edge_future"]
                         })
                 } 
                 // the diff is smaller than some val
                 else if (data.dfrs[j].series_sum_each_arc_diff < -1 * config_dfg.threshold_arc_diff_min){
-                    console.log('deciding to draw the red arc: ')
-                    console.log(-1 * config_dfg.threshold_arc_diff_min)
-                    console.log(data.dfrs[j].series_sum_each_arc_diff )
+                    // console.log('deciding to draw the red arc: ')
+                    // console.log(-1 * config_dfg.threshold_arc_diff_min)
+                    // console.log(data.dfrs[j].series_sum_each_arc_diff )
 
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
@@ -82,8 +79,8 @@ function drawDFG(data){
                                         + ' ↓' 
                                         + round_and_to_string(temp_sum_diff),
                             // additional options possible
-                            style: "stroke: #f66; " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
-                            arrowheadStyle: "fill: #f66"
+                            style: "stroke: " + colors["edge_past"] + "; " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
+                            arrowheadStyle: "fill: " + colors["edge_past"]
                             
                         })
                 } else {
@@ -102,7 +99,7 @@ function drawDFG(data){
                         curve: d3.curveBasis, // cuvre the edges
                         label: round_and_to_string(temp_sum),
                         style: "stroke-width: " + config_dfg.edge_size_scale(data.dfrs[j].series_sum_each_arc) + "px;", 
-                        arrowheadStyle: "fill: black"
+                        arrowheadStyle: "fill: " + colors['edge_neutral']
                         //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
                         // arrowheadStyle: "fill: #f66" 
                         // additional options possible
@@ -130,7 +127,6 @@ function drawDFG(data){
         value.label = state;
         value.rx = value.ry = 5;
         value.style = "fill: " + config_dfg.node_color_scale(data.activities_importance[state]);
-        console.log( config_dfg.node_color_scale(value.label))
         config_dfg.g.setNode(state, value);
     });
     delete states;
@@ -163,7 +159,7 @@ function drawDFG(data){
         .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true}); });
     
     // Center the graph
-    var initialScale = 0.5;
+    var initialScale = 0.2;
     svg.call(zoom.transform, d3.zoomIdentity.translate((svg.attr("width") - config_dfg.g.graph().width * initialScale) / 2, 20).scale(initialScale));
     // svg.attr('height', config_dfg.g.graph().height * initialScale + 40);
 }
