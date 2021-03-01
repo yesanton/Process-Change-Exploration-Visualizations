@@ -45,7 +45,6 @@ d3.csv("bpi12-50-25-25.csv",
   // When reading the csv, I must format variables:
     function(d,i){        
         if (i == 0) {
-
             data.count = parseInt(d['count'])
             data.count_actual = parseInt(d['technique'])
             // console.log(d)
