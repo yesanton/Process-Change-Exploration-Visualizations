@@ -168,18 +168,29 @@ function drawDFG(data){
     // this is the size of the graph inside of svg
     let height_dfg_actual = config_dfg.g.graph().height;
     // we scale the atual svg to the box that we have on the screen
-    // 10 stands for padding (5 at the top will be taken, and 5 for the bottom)
-    let initialScale = (height_dfg_svg_box - 20) / height_dfg_actual; 
-    initialScale = initialScale < 0.9? initialScale : 0.9
+    // we also calcualte here that the dfg will always be in the middle if it is smaller than the whole screen
+    let initialScaleCalculated = (height_dfg_svg_box - position.padding_big) / height_dfg_actual;
+    let initialScale = initialScaleCalculated < 0.9? initialScaleCalculated : 0.9
 
-    console.log(height_dfg_svg_box)
-    console.log(height_dfg_actual)
-    svg.call(zoom.transform, d3.zoomIdentity.translate((width_dfg - config_dfg.g.graph().width * initialScale) / 2, 10).scale(initialScale));
-    console.log("!!!!!!!!!!!!!@@@@@@@@@@@  " )
-    height_dfg_svg_box = document.getElementById('DFGChart').getBoundingClientRect().height;
-    height_dfg_actual = config_dfg.g.graph().height;
-    console.log(height_dfg_svg_box)
-    console.log(height_dfg_actual)
+    // console.log(initialScale)
+    let padding_top = 0
+    if (initialScale >= 0.9){
+        padding_top = (height_dfg_svg_box - (height_dfg_actual * initialScale)) / 2
+    } else {
+        padding_top = position.padding
+    }
+
+    // console.log(height_dfg_svg_box)
+    // console.log(height_dfg_actual)
+    // console.log('making adjustments of the dfg positioning')
+    // console.log(padding_top)
+
+    svg.call(zoom.transform, d3.zoomIdentity.translate((width_dfg - config_dfg.g.graph().width * initialScale) / 2, padding_top).scale(initialScale));
+    // console.log("!!!!!!!!!!!!!@@@@@@@@@@@  " )
+    // height_dfg_svg_box = document.getElementById('DFGChart').getBoundingClientRect().height;
+    // height_dfg_actual = config_dfg.g.graph().height;
+    // console.log(height_dfg_svg_box)
+    // console.log(height_dfg_actual)
 
     
     // svg.attr('height', config_dfg.g.graph().height * initialScale + 40);
