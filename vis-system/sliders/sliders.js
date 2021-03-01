@@ -10,7 +10,7 @@ var pathSlider = d3
     .max(1)
     .step(0.01)
     .width(div_sizes.width)
-    .height(div_sizes.height - 0.15 * div_sizes.height)
+    .height(div_sizes.height - position.padding_big * 3.5)
     .tickFormat(d3.format('.0%'))
     .ticks(2)
     .default(1)
@@ -33,7 +33,7 @@ var activitySlider = d3
     .max(1)
     .step(0.01)
     .width(div_sizes.width)
-    .height(div_sizes.height - 0.15 * div_sizes.height)
+    .height(div_sizes.height - position.padding_big * 3.5)
     .ticks(2)
     .tickFormat(d3.format('.0%'))
     .displayValue(true)
@@ -58,9 +58,12 @@ let pathSliderSvg = d3.select('#SliderId1')
     .attr('height', div_sizes.height)
     pathSliderSvg
     .append('g')
-    .attr('transform', 'translate(60,30)')
+    .attr('transform', 'translate(' + div_sizes.width /2  +',' + (position.padding_big * 2.5).toString() + ')')
     .call(pathSlider);
-pathSliderSvg.append('g').attr('transform', 'translate(0,10)').append('text').text('Path slider')
+console.log("position.padding")
+console.log(position.padding)
+
+pathSliderSvg.append('g').attr('transform', 'translate('  + div_sizes.width /2 +  ',' +  position.padding_big.toString() + ')').append('text').text('Path slider').style("text-anchor", "middle")
 
 
 let activitySliderSvg = d3.select('#SliderId2')
@@ -69,6 +72,6 @@ let activitySliderSvg = d3.select('#SliderId2')
     .attr('height', div_sizes.height)
     activitySliderSvg
     .append('g')
-    .attr('transform', 'translate(60,30)')
+    .attr('transform', 'translate(' + div_sizes.width /2  +',' + (position.padding_big * 2.5).toString() + ')')
     .call(activitySlider);    
-activitySliderSvg.append('g').attr('transform', 'translate(0,10)').append('text').text('Activities slider')
+activitySliderSvg.append('g').attr('transform', 'translate(' + div_sizes.width /2 + ',' +  position.padding_big.toString() + ')').append('text').text('Activities slider').style("text-anchor", "middle")

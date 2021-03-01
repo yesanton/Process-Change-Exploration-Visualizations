@@ -1,5 +1,10 @@
 // in this file the main system is set up to be running
 
+var position = {
+    padding: 10, 
+    padding_big: 20
+}
+
 let colors = {
     edge_past: '#f66',
     edge_future: 'green', 
@@ -57,7 +62,7 @@ d3.csv("bpi12-50-25-25.csv",
             }
             temp.act1 = d.act1
             temp.act2 = d.act2
-            console.log(temp.act1 + "  "+ temp.act2)
+     
             temp.technique = d.technique
             // add comdined info about the arcs
             temp.series_sum_each_arc = d3.sum(temp.series)
