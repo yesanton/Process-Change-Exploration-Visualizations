@@ -14,11 +14,10 @@ let colors = {
 // colors.edge_future = 'green'
 // let count = 50
 // let count_actual = 25
-let data = {}
-data.count = 50
-data.count_actual = 25
-// data.count = 15
-// data.count_actual = 10
+var data = {}
+// data.count  - these are the count of each time series
+// data.count_actual  - the actual derived from the data, count_actual - count is the predicted then.
+// data.series_sum// this is for the sum of the time series to build the graph
 
 // data.timestamps - timestamps
 // data.dfrs - directly follow relations for each constraints
@@ -29,7 +28,7 @@ data.count_actual = 25
 // data.dfrs[].series_sum_each_arc -> is the actual dfg relation 
 // data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations 
 data.dfrs = []
-data.series_sum = new Array(data.count).fill(0)// this is for the sum of the time series to build the graph
+
 data.activities_importance = {} // this will be used to colr the activities, and to filter the activities with activities slider
 
 // the result of brushed region and filtering and differencing (when available) is stored here
@@ -43,6 +42,16 @@ d3.csv("bpi12-50-25-25.csv",
   // When reading the csv, I must format variables:
     function(d,i){        
         if (i == 0) {
+
+            data.count = parseInt(d['count'])
+            data.count_actual = parseInt(d['technique'])
+            // console.log(d)
+            // console.log(data.count)
+            // console.log(data.count_actual)
+
+            //initializing variable that depends on the count
+            data.series_sum = new Array(data.count).fill(0)
+
             // let d_new = d.slice(4,5);
             let timestamps = []
             for (let j = 0 ; j < data.count ; j+=1){
@@ -52,6 +61,9 @@ d3.csv("bpi12-50-25-25.csv",
             }
             // should we add here also unnecessary columns?
             data.timestamps = timestamps;
+
+            
+
             // return timestamps
         }
         else {
