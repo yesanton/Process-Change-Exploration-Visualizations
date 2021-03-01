@@ -10,6 +10,7 @@ let colors = {
     edge_future: 'green', 
     edge_neutral: 'black'
 }
+
 // colors.edge_past = '#f66'
 // colors.edge_future = 'green'
 // let count = 50
@@ -26,7 +27,9 @@ var data = {}
 // data.dfrs[].act2
 // data.dfrs[].technique
 // data.dfrs[].series_sum_each_arc -> is the actual dfg relation 
-// data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations 
+// data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations
+// data.dfrs[].series_sum_each_arc_prev 
+// data.dfrs[].series_sum_each_arc_next 
 data.dfrs = []
 
 data.activities_importance = {} // this will be used to colr the activities, and to filter the activities with activities slider
@@ -246,6 +249,13 @@ function differenceData(new_data_1, new_data_2){
     // taking into account that we always compare the first in time with second dataset
     for (let i = 0 ; i < new_data_1.dfrs.length ; i += 1){
         new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_2.dfrs[i].series_sum_each_arc - new_data_1.dfrs[i].series_sum_each_arc;
+        new_data_2.dfrs[i].series_sum_each_arc_prev = new_data_1.dfrs[i].series_sum_each_arc
+        new_data_2.dfrs[i].series_sum_each_arc_next = new_data_2.dfrs[i].series_sum_each_arc
+        new_data_2.dfrs[i].series_sum_each_arc += new_data_1.dfrs[i].series_sum_each_arc
+        // now we only use the data from the other section
+        new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_1.dfrs[i].series_sum_each_arc;
+        
+        
     }
 
     console.log(new_data_2);
