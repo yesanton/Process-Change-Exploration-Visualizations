@@ -229,10 +229,10 @@ function round_and_to_string(number){
 // this code sets the style for the arcs
 function edge_style(act1, act2, edge_scale_val, edge_type){
     if (act1 === 'start'){
-        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 5, 10"
+        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 4, 10"
     }
     else if (act2 === 'end') {
-        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 5, 15"
+        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 10, 4"
     } else {
         return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px";
     }
