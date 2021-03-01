@@ -63,9 +63,6 @@ d3.csv("bpi12-50-25-25.csv",
             }
             // should we add here also unnecessary columns?
             data.timestamps = timestamps;
-
-            
-
             // return timestamps
         }
         else {
@@ -293,8 +290,16 @@ function filterDataByActivitySlider(d) {
     });
     // after sorting one can see which activities are used the most and which the least.
     activities_filter_array.sort(function(first, second) {
+        if (first[0] === 'start' || first[0] === 'end') {
+            return -1;
+        } else if (second[0] === 'start' || second[0] === 'end'){
+            return 1;
+        }
         return second[1] - first[1];
     }) 
+
+    console.log(activities_filter_array)
+    console.log(Infinity)
     // this will only leave the right number of elements
     activities_filter_array = activities_filter_array.slice(0, Math.round(sliders.activity * activities_filter_array.length))
     let set_activities_filter = new Set(activities_filter_array.map(function(key) {return key[0]}))
