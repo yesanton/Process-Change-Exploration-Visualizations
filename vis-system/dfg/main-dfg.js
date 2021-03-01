@@ -14,7 +14,7 @@ function configDFG(data){
     config.threshold_arc_min = 10
     config.threshold_arc_diff_min = 10
 
-    console.log(Object.keys(data.activities_importance))
+    // console.log(Object.keys(data.activities_importance))
 
     let temp_activities_importance = Object.keys(data.activities_importance).map(function(key){
         return data.activities_importance[key];
@@ -24,9 +24,8 @@ function configDFG(data){
 
 
     let t = data.dfrs.map(i => i.series_sum_each_arc)
-    console.log("t!________________________")
-    
-    console.log(t)
+    // console.log("t!________________________")
+    // console.log(t)
     config.edge_size_scale = d3.scaleLinear().domain([d3.min(t),d3.max(t)])
                             .range([1, 4])
     return config;
@@ -120,9 +119,9 @@ function drawDFG(data){
     }
     
     // Add states to the graph, set labels, and style
-    console.log('here we draw nodes! --->')
-    console.log(data)
-    console.log(states)
+    // console.log('here we draw nodes! --->')
+    // console.log(data)
+    // console.log(states)
     Object.keys(states).forEach(function(state) {
         var value = states[state];
         value.label = state + " (" + Math.round(data.activities_importance[state]) + ")";

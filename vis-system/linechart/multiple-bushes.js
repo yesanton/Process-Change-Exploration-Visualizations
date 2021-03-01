@@ -54,7 +54,12 @@ function drawLineplot(data, separate_at){
     .range([ 0, config_lineplot.width ]);
   config_lineplot.svg.append("g")
     .attr("transform", "translate(0," + config_lineplot.height + ")")
-    .call(d3.axisBottom(x));
+    .call(d3.axisBottom(x).tickFormat((d,i) => {
+      if (d3.timeFormat("%b")(d) == 'Jan' || i == 0) {
+        return d3.timeFormat("%b %d, %Y")(d) 
+      }
+      return d3.timeFormat("%b %d")(d)
+    }));
 
   console.log ("data from line chart2")
 
@@ -63,16 +68,16 @@ function drawLineplot(data, separate_at){
     .domain([0, d3.max(data_for_line_chart, function(d) { return +d.value; })])
     .range([ config_lineplot.height, 0 ]);
   config_lineplot.svg.append("g")
-    .call(d3.axisLeft(y));
+    .call(d3.axisLeft(y)
+            .ticks(3));
 
-/////////////// experimental
-  // here we will color different color of the past and the predicted area on the area chart
+// here we will color different color of the past and the predicted area on the area chart
 
-  // colors are taken from here
-  // https://en.wikipedia.org/wiki/Grey#:~:text=In%20Europe%20and%20North%20America,it%20as%20their%20favorite%20color.
+// colors are taken from here
+// https://en.wikipedia.org/wiki/Grey#:~:text=In%20Europe%20and%20North%20America,it%20as%20their%20favorite%20color.
 
-  // idea of using gradient from here:
-  // https://stackoverflow.com/questions/19114896/d3-js-chart-area-filling-with-different-colors
+// idea of using gradient from here:
+// https://stackoverflow.com/questions/19114896/d3-js-chart-area-filling-with-different-colors
   var grad = config_lineplot.svg.append("defs")
     .append("linearGradient")
     .attr("id", "grad");
@@ -132,7 +137,8 @@ function drawLineplot(data, separate_at){
       if (s1.empty()) {
         // noithing is found in the second selection
         d3.selectAll("#brush-0 .selection").attr('fill', colors["edge_neutral"])
-      } else {
+      } else if (d3.brushSelection(document.getElementById('brush-1')) && 
+                 d3.brushSelection(document.getElementById('brush-0'))) {
         if (d3.brushSelection(document.getElementById('brush-1'))[0] < 
             d3.brushSelection(document.getElementById('brush-0'))[0]) {
           d3.selectAll("#brush-1 .selection").attr('fill', colors["edge_past"])

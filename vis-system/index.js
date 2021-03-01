@@ -17,6 +17,9 @@ let colors = {
 let data = {}
 data.count = 50
 data.count_actual = 25
+// data.count = 15
+// data.count_actual = 10
+
 // data.timestamps - timestamps
 // data.dfrs - directly follow relations for each constraints
 // data.dfrs[].series[]
@@ -94,6 +97,7 @@ function updateSelection(selections_dates){
         filteredData = filterDataByDate(selections_dates[0]);
         // draw new plot
         // drawDFG(filteredData);
+
         updatePathAndActivitySlidersD(filteredData);
     }
     else { // here is when two regions are brushed
@@ -143,8 +147,12 @@ function updatePathAndActivitySliders(pathSlider, activitySlider){
 }
 
 function updatePathAndActivitySlidersD(d) {
+
+    console.log('')
+
     if (Math.abs(sliders.activity - 1) < 0.01 && Math.abs(sliders.path - 1) < 0.01) {
         // if both are 1 then nothing to do here just show the original data
+        console.log('drawing dfg right away, nothing to filter with sliders')
         drawDFG(d);
     } else {
         if (Math.abs(sliders.activity - 1) < 0.01 && sliders.path < 1) {
@@ -179,12 +187,15 @@ function filterDataByDate(dates){
     let temp_data = {}
     temp_data.dfrs = []
 
-    console.log("filter function")
+    // console.log("filter function")
+    // console.log(data)           
+    // console.log(dates)
 
-    console.log(data)
     temp_data.timestamps = data.timestamps.filter(function (t) {
-        return t > dates[0] && t < dates[1]
+        return t >= dates[0] && t <= dates[1]
     })
+
+    // console.log(temp_data.timestamps)
 
     let temp_timestamp_in_range_first = 0
     while (data.timestamps[temp_timestamp_in_range_first] < dates[0]){
@@ -192,8 +203,8 @@ function filterDataByDate(dates){
     }
     let temp_timestamp_in_range_second = temp_timestamp_in_range_first + temp_data.timestamps.length
 
-    console.log(temp_timestamp_in_range_first)
-    console.log(temp_timestamp_in_range_second)
+    // console.log(temp_timestamp_in_range_first)
+    // console.log(temp_timestamp_in_range_second)
 
     for (let elem of data.dfrs){
         temp = []
