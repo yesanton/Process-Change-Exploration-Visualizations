@@ -5,6 +5,8 @@ var position = {
     padding_big: 20
 }
 
+// help with choosing colors
+// https://coolors.co/7d7e7c
 let colors = {
     edge_past: '#f66',
     edge_future: '#008000', 
