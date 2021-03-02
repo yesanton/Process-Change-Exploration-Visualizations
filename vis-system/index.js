@@ -7,8 +7,13 @@ var position = {
 
 let colors = {
     edge_past: '#f66',
-    edge_future: 'green', 
-    edge_neutral: 'black'
+    edge_future: '#008000', 
+    edge_neutral: '#7D7E7C',
+}
+let colors_start_end = {
+    edge_past: '#FFDEDE',
+    edge_future: '#ADFFAD',  
+    edge_neutral: '#C7C8C7' 
 }
 
 // colors.edge_past = '#f66'
@@ -32,7 +37,8 @@ var data = {}
 // data.dfrs[].series_sum_each_arc_next 
 data.dfrs = []
 
-data.activities_importance = {} // this will be used to colr the activities, and to filter the activities with activities slider
+data.activity_count = {} // this will be used to colr the activities, and to filter the activities with activities slider
+// data.activity_count_prev // shows the activity count of the region that we compare the current region with 
 
 // the result of brushed region and filtering and differencing (when available) is stored here
 let filteredData;
@@ -41,7 +47,9 @@ let filteredDataPASlider = {};
 // store value of the activity and path sliders here sliders.activity, sliders.path
 let sliders = {path: 1, activity: 1}
 
-d3.csv("bpi12-50-25-25.csv",
+d3.csv("data/bpi12-50-25-25.csv",
+// d3.csv("data/sepsis.csv",
+
   // When reading the csv, I must format variables:
     function(d,i){        
         if (i == 0) {
@@ -60,6 +68,10 @@ d3.csv("bpi12-50-25-25.csv",
                 // https://github.com/d3/d3-time-format
                 let temp_date = d3.timeParse("%Y-%m-%d %H:%M:%S.%f%Z")(d[j])
                 timestamps.push(temp_date) 
+
+                console.log(temp_date)
+                console.log(d[j])
+
             }
             // should we add here also unnecessary columns?
             data.timestamps = timestamps;
@@ -88,7 +100,7 @@ d3.csv("bpi12-50-25-25.csv",
         console.log("---------dfg")
         console.log(data)
 
-        data = calculateActivitiesImportance(data)
+        data.activity_count = calculateActivitiesImportance(data)
         
         drawDFG(data)
         drawLineplot(data, data.count_actual / data.count)
@@ -186,8 +198,10 @@ function updatePathAndActivitySlidersD(d) {
             filteredDataPASlider = filterDataByPathSlider(filteredDataPASlider)
         }
         
-        drawDFG(filteredDataPASlider);
+        console.log('filteredDataPASlider')
+        console.log(filteredDataPASlider)
 
+        drawDFG(filteredDataPASlider);
         delete filteredDataPASlider; 
     }
 }
@@ -233,8 +247,8 @@ function filterDataByDate(dates){
     }
 
     console.log(temp_data)
-    temp_data.activities_importance = {}
-    temp_data = calculateActivitiesImportance(temp_data)
+    temp_data.activity_count = {}
+    temp_data.activity_count = calculateActivitiesImportance(temp_data)
 
     console.log(temp_data)
     return temp_data;
@@ -251,7 +265,7 @@ function differenceData(new_data_1, new_data_2){
         // now we only use the data from the other section
         new_data_2.dfrs[i].series_sum_each_arc_diff = new_data_1.dfrs[i].series_sum_each_arc;
         
-        
+        new_data_2.activity_count_prev = new_data_1.activity_count;
     }
 
     console.log(new_data_2);
@@ -282,11 +296,9 @@ function filterDataByActivitySlider(d) {
     //     }
     // }
 
-    d = calculateActivitiesImportance(d)
-
     // Create items array
-    var activities_filter_array = Object.keys(d.activities_importance).map(function(key) {
-        return [key, d.activities_importance[key]];
+    var activities_filter_array = Object.keys(d.activity_count).map(function(key) {
+        return [key, d.activity_count[key]];
     });
     // after sorting one can see which activities are used the most and which the least.
     activities_filter_array.sort(function(first, second) {
@@ -318,7 +330,12 @@ function filterDataByActivitySlider(d) {
     filteredBySliders.timestamps = d.timestamps
     filteredBySliders.series_sum = d.series_sum
     filteredBySliders.dfrs = temp_dfrs
-    filteredBySliders.activities_importance = d.activities_importance
+    console.log(d)
+    console.log('123412341234123412341234<<_<_<_<_<_')
+    console.log(filteredBySliders)
+    filteredBySliders.activity_count = d.activity_count
+    filteredBySliders.activity_count_prev = d.activity_count_prev
+    console.log(filteredBySliders)
     return filteredBySliders;
 }
 
@@ -335,7 +352,8 @@ function filterDataByPathSlider(d) {
     filteredBySliders.timestamps = d.timestamps
     filteredBySliders.series_sum = d.series_sum
     filteredBySliders.dfrs = temp_dfrs
-    filteredBySliders.activities_importance = d.activities_importance
+    filteredBySliders.activity_count = d.activity_count
+    filteredBySliders.activity_count_prev = d.activity_count_prev
     return filteredBySliders;
   
 }
@@ -344,19 +362,22 @@ function filterDataByPathSlider(d) {
 function calculateActivitiesImportance(d){
     // this loop collects activities that are exectuted alongsize with the cordinalities 
     
+    activity_count = {}
+
+    activity_count['end'] = 0
+    for (let i=0; i < d.dfrs.length ; i+=1) {
+        activity_count[d.dfrs[i].act1] = 0
+    }
     for (let i=0; i < d.dfrs.length ; i+=1){
-        if (d.dfrs[i].act1 in d.activities_importance) {
-            d.activities_importance[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
-        } else { 
-            d.activities_importance[d.dfrs[i].act1] = d.dfrs[i].series_sum_each_arc 
+        if (d.dfrs[i].act1 in activity_count) {
+            activity_count[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 
         }
-        // if (d.dfrs[i].act2 in d.activities_importance) {
-        //     d.activities_importance[d.dfrs[i].act2] += d.dfrs[i].series_sum_each_arc; 
-        // } else { 
-        //     d.activities_importance[d.dfrs[i].act2] = d.dfrs[i].series_sum_each_arc 
-        // }
+        if (d.dfrs[i].act2 === 'end' && d.dfrs[i].act2 in activity_count) {
+            activity_count['end'] += d.dfrs[i].series_sum_each_arc
+        }
+
     }
     console.log('1111111111111111111111111111111111111111111111111111111111')
 
-    return d
+    return activity_count
 }

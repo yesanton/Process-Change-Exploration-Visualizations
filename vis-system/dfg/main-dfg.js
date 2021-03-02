@@ -19,14 +19,19 @@ function configDFG(data){
         start: 'stroke-dasharray: 5, 5'
     }
 
-    // console.log(Object.keys(data.activities_importance))
+    // console.log(Object.keys(data.activity_count))
 
-    let temp_activities_importance = Object.keys(data.activities_importance).map(function(key){
-        return data.activities_importance[key];
+    let temp_activity_count = Object.keys(data.activity_count).map(function(key){
+        return data.activity_count[key];
     })
-    config.node_color_scale = d3.scaleLinear().domain([d3.min(temp_activities_importance),d3.max(temp_activities_importance)])
+    config.node_color_scale = d3.scaleLinear().domain([d3.min(temp_activity_count),d3.max(temp_activity_count)])
                                               .range(["white", "green"])
-    config.node_end_start_color_scale = d3.scaleLinear().domain([d3.min(temp_activities_importance),d3.max(temp_activities_importance)])
+
+    // this is for diverging scale for the change information in nodes
+    // config.node_color_scale_diff = d3.scaleLinear().domain([(d3.max(temp_activity_count) * -1),0,d3.max(temp_activity_count)])
+    //                                           .range(["red", "white", "green"])
+
+    config.node_end_start_color_scale = d3.scaleLinear().domain([d3.min(temp_activity_count),d3.max(temp_activity_count)])
                                               .range(["white", "orange"])
 
     let t = data.dfrs.map(i => i.series_sum_each_arc)
@@ -40,7 +45,8 @@ function configDFG(data){
 
 //function to draw dfg on 
 function drawDFG(data){     
-
+    console.log('datadatadatadatadatadatadatadatadatadatadatadata')
+    console.log(data)
     // initialize the dfg againt
     config_dfg = configDFG(data);
     // remove the previous plot
@@ -74,7 +80,7 @@ function drawDFG(data){
                                                         + round_and_to_string(temp_sum_next),
                             // additional options possible
                             style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_future"),
-                            arrowheadStyle: "fill: " + colors["edge_future"]
+                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2, 'edge_future')
                         })
                 } 
                 // the diff is smaller than some val
@@ -92,7 +98,7 @@ function drawDFG(data){
                                         + round_and_to_string(temp_sum_next),
                             // additional options possible
                             style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_past"), 
-                            arrowheadStyle: "fill: " + colors["edge_past"]
+                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,"edge_past")
                         })
                     
                 } else {
@@ -103,7 +109,7 @@ function drawDFG(data){
                                                     + '→' 
                                                     + round_and_to_string(temp_sum_next),
                             style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_neutral"), 
-                            arrowheadStyle: "fill: black"
+                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,'edge_neutral')
 
                         })
                     
@@ -114,7 +120,7 @@ function drawDFG(data){
                         curve: d3.curveBasis, // cuvre the edges
                         label: round_and_to_string(temp_sum),
                         style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_neutral"), 
-                        arrowheadStyle: "fill: " + colors['edge_neutral']
+                        arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,'edge_neutral')
                         //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
                         // arrowheadStyle: "fill: #f66" 
                         // additional options possible
@@ -140,17 +146,30 @@ function drawDFG(data){
     // console.log(states)
     Object.keys(states).forEach(function(state) {
         var value = states[state];
-            value.label = state + " (" + Math.round(data.activities_importance[state]) + ")";
-            value.rx = value.ry = 5;
+        // console.log(data.activity_count_prev)
+        // console.log(data)
+        if (!(data.activity_count_prev === undefined)) {
+            value.label = state + " (" + Math.round(data.activity_count_prev[state]) + '→' + Math.round(data.activity_count[state]) + ")";
+            // console.log(value.label)
+
+        } else {
+            value.label = state + " (" + Math.round(data.activity_count[state]) + ")";
+        }
+        value.rx = value.ry = 5;
 
         if (state === 'end' || state === 'start') {
-            console.log(state)
+            // console.log(state)
             value.shape = 'ellipse'
-            value.style = "fill: " + config_dfg.node_end_start_color_scale(data.activities_importance[state])
+            value.style = "fill: " + config_dfg.node_end_start_color_scale(data.activity_count[state])
             config_dfg.g.setNode(state, value);
         } else {
+            // if (!(data.activity_count_prev === undefined)) {
+                // the diverging color schema for the difference 
+                // value.style = "fill: " + config_dfg.node_color_scale_diff(data.activity_count[state]- data.activity_count_prev[state]);
+            // } else {
+                value.style = "fill: " + config_dfg.node_color_scale(data.activity_count[state]);
+            // }
             
-            value.style = "fill: " + config_dfg.node_color_scale(data.activities_importance[state]);
             config_dfg.g.setNode(state, value);
         }
     });
@@ -229,12 +248,23 @@ function round_and_to_string(number){
 // this code sets the style for the arcs
 function edge_style(act1, act2, edge_scale_val, edge_type){
     if (act1 === 'start'){
-        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 4, 10"
+        return "stroke: " + colors_start_end[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 4, 10"
     }
     else if (act2 === 'end') {
-        return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 10, 4"
+        return "stroke: " + colors_start_end[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 10, 4"
     } else {
         return "stroke: " + colors[edge_type] + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px";
     }
     
+}
+
+function arrow_style(act1, act2, edge_type){
+    if (act1 === 'start'){
+        return "fill: " + colors_start_end[edge_type]
+    }
+    else if (act2 === 'end') {
+        return "fill: " + colors_start_end[edge_type]
+    } else {
+        return "fill: " + colors[edge_type];
+    } 
 }

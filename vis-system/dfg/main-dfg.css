@@ -9,8 +9,13 @@ text {
     fill: #fff;
   }
   
-  .edgePath path {
+  .node ellipse {
     stroke: #333;
+    fill: #fff;
+  }
+
+  .edgePath path {
+    /* stroke: #333; */
     fill: none;
     stroke-width: 1.5px;
   }

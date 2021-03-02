@@ -86,7 +86,8 @@ function drawLineplot(data, separate_at){
       grad.append("stop").attr("offset", Math.round(config_lineplot.separate_at* 100) + '%').attr("stop-color", "silver");
       grad.append("stop").attr("offset", "100%").attr("stop-color", "silver"); 
 
-
+  console.log ("data from line chart3")
+  console.log(data_for_line_chart)
   // Add the area
   config_lineplot.svg.append("path")
     .datum(data_for_line_chart)
@@ -116,6 +117,8 @@ function drawLineplot(data, separate_at){
   * However, imagine the user had simply dragged an existing brush--in that case we would not want to create a new one.
   * We will use the selection of a brush in brushend() to differentiate these cases.
   */
+ console.log ("data from line chart4")
+
   function newBrush() {
     var brush = d3.brushX()
       .extent([[0, 0], [config_lineplot.width, config_lineplot.height]])
