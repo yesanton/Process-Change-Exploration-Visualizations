@@ -14,8 +14,10 @@ let colors = {
 }
 let colors_start_end = {
     edge_past: '#FFDEDE',
-    edge_future: '#ADFFAD',  
-    edge_neutral: '#C7C8C7' 
+    // edge_future: '#ADFFAD',  
+    edge_future: '#CBE2CB',  
+    edge_neutral: '#C7C8C7'
+     
 }
 
 // colors.edge_past = '#f66'
@@ -49,7 +51,7 @@ let filteredDataPASlider = {};
 // store value of the activity and path sliders here sliders.activity, sliders.path
 let sliders = {path: 1, activity: 1}
 
-d3.csv("data/bpi12-50-25-25.csv",
+d3.csv("data/new_sepsis-no_int-50-aggregation-equisize.csv",
 // d3.csv("data/sepsis.csv",
 
   // When reading the csv, I must format variables:

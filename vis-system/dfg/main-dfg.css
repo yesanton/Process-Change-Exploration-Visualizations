@@ -5,12 +5,12 @@ text {
   }
   
   .node rect {
-    stroke: #333;
+    stroke: #7D7E7C;
     fill: #fff;
   }
   
   .node ellipse {
-    stroke: #333;
+    stroke: #7D7E7C;
     fill: #fff;
   }
 
