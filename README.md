@@ -8,6 +8,7 @@ The system is implemented with Javascript and D3.js visualization library.
 
 ## Examples
 
+![Image of the system](https://github.com/yesanton/Process-Change-Exploration-Visualizations/blob/main/examples/vis-system-one-brush.png)
 
 
 ## Research
