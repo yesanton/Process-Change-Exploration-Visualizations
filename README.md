@@ -8,8 +8,13 @@ The system is implemented with Javascript and D3.js visualization library.
 
 ## Examples
 
+The example of visualizing the process change with one brushed region:
+
 ![Image of the system](https://github.com/yesanton/Process-Change-Exploration-Visualizations/blob/main/examples/vis-system-one-brush.png)
 
+The example of visualizing the process change with two:
+
+![Image of the system](https://github.com/yesanton/Process-Change-Exploration-Visualizations/blob/main/examples/vis-system-two-brushes.png)
 
 ## Research
 
