@@ -39,6 +39,9 @@ var data = {}
 // data.dfrs[].series_sum_each_arc_diff -> is the actual diff or dfg relations
 // data.dfrs[].series_sum_each_arc_prev 
 // data.dfrs[].series_sum_each_arc_next 
+// data.series_sum_each_arc_min 
+// data.series_sum_each_arc_max 
+
 data.dfrs = []
 
 data.activity_count = {} // this will be used to colr the activities, and to filter the activities with activities slider
@@ -51,7 +54,8 @@ let filteredDataPASlider = {};
 // store value of the activity and path sliders here sliders.activity, sliders.path
 let sliders = {path: 1, activity: 1}
 
-d3.csv("data/new_sepsis-no_int-50-aggregation-equisize.csv",
+// d3.csv("data/new_sepsis-no_int-50-aggregation-equisize.csv",
+d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize.csv",
 // d3.csv("data/sepsis.csv",
 
   // When reading the csv, I must format variables:
@@ -142,10 +146,7 @@ function updateSelection(selections_dates){
         } else {
             filteredData = differenceData(filteredData2, filteredData1);
         }
-
-        
         console.log('difference between calculated');
-
         // in case the path and activity sliders are also not in their default 
         // perform those filters and :
         updatePathAndActivitySlidersD(filteredData);

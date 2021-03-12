@@ -8,7 +8,6 @@ function configDFG(data){
     g.graph().Schedule = true;
     g.graph().WBS = false;
     console.log(g)  
-
     config = {}
     config.g = g
     config.threshold_arc_min = 10
@@ -18,9 +17,7 @@ function configDFG(data){
         end: 'stroke-dasharray: 5, 10',
         start: 'stroke-dasharray: 5, 5'
     }
-
     // console.log(Object.keys(data.activity_count))
-
     let temp_activity_count = Object.keys(data.activity_count).map(function(key){
         return data.activity_count[key];
     })
@@ -45,12 +42,18 @@ function configDFG(data){
 
 //function to draw dfg on 
 function drawDFG(data){     
-    console.log('datadatadatadatadatadatadatadatadatadatadatadata')
     console.log(data)
     // initialize the dfg againt
     config_dfg = configDFG(data);
     // remove the previous plot
     d3.select("#DFGChart").selectAll("*").remove();
+
+    // todo: stepwise color for the arcs in two brushed version
+    // let minmax_series_sums = determineMaxMinSeriesSum(data)
+    // console.log('datadatadatadatadatadatadatadatadatadatadatadata')
+    // console.log(minmax_series_sums)
+    // let scaleC = d3.scaleLinear().domain(minmax_series_sums).range(['red', 'black', 'green'])
+    // console.log(scaleC(0))
     
     let states = {}
     for (let j = 0 ; j < data.dfrs.length ; j+= 1){
@@ -63,13 +66,14 @@ function drawDFG(data){
         let temp_sum = data.dfrs[j].series_sum_each_arc;
         let temp_sum_prev = data.dfrs[j].series_sum_each_arc_prev
         let temp_sum_next = data.dfrs[j].series_sum_each_arc_next
+        let temp_diff = temp_sum_next - temp_sum_prev;
 
         if (temp_sum > config_dfg.threshold_arc_min){
             // // Set up the edges
             if (!(temp_sum_prev === undefined)){
                 // the difference between the two datasets is larger than some value:
                 // if (data.dfrs[j].series_sum_each_arc_diff > config_dfg.threshold_arc_diff_min){
-                if (temp_sum_next > temp_sum_prev){
+                if (temp_diff > 0){
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
                             curve: d3.curveBasis, // cuvre the edges
@@ -79,13 +83,14 @@ function drawDFG(data){
                                                         + '→' 
                                                         + round_and_to_string(temp_sum_next),
                             // additional options possible
-                            style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_future"),
+                            // style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_future"),
+                            style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, scaleC(temp_diff)),
                             arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2, 'edge_future')
                         })
                 } 
                 // the diff is smaller than some val
                 // else if (data.dfrs[j].series_sum_each_arc_diff < -1 * config_dfg.threshold_arc_diff_min){
-                else if (temp_sum_next < temp_sum_prev){
+                else if (temp_diff < 0){
                     config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
                         {
                             curve: d3.curveBasis, // cuvre the edges
@@ -268,3 +273,22 @@ function arrow_style(act1, act2, edge_type){
         return "fill: " + colors[edge_type];
     } 
 }
+
+// todo: stepwise color for the arcs in two brushed version
+// function determineMaxMinSeriesSum(data) {
+//     let mi = Infinity;
+//     let ma = 0;
+//     console.log('here -<<')
+//     console.log(data)
+//     for (let i = 0; i < data.dfrs.length ; i += 1){
+//         let t = data.dfrs[i].series_sum_each_arc_next - data.dfrs[i].series_sum_each_arc_prev;
+//         if (mi > t) {
+//             mi = t;
+//         } 
+//         if (ma < t) {
+//             ma = t;
+//         }
+//     }
+//     console.log('here ->>')
+//     return [mi, ma]
+// }
