@@ -12,6 +12,7 @@ function configDFG(data){
     config.g = g
     config.threshold_arc_min = 10
     config.threshold_arc_diff_min = 10
+    config.coloring = "levelthreecolors" //"threecolors" // 
 
     config.dashes = {
         end: 'stroke-dasharray: 5, 10',
@@ -36,6 +37,7 @@ function configDFG(data){
     // console.log(t)
     config.edge_size_scale = d3.scaleLinear().domain([d3.min(t),d3.max(t)])
                             .range([1, 4])
+
     return config;
 }
 
@@ -49,11 +51,11 @@ function drawDFG(data){
     d3.select("#DFGChart").selectAll("*").remove();
 
     // todo: stepwise color for the arcs in two brushed version
-    // let minmax_series_sums = determineMaxMinSeriesSum(data)
-    // console.log('datadatadatadatadatadatadatadatadatadatadatadata')
-    // console.log(minmax_series_sums)
-    // let scaleC = d3.scaleLinear().domain(minmax_series_sums).range(['red', 'black', 'green'])
-    // console.log(scaleC(0))
+    let minmax_series_sums = determineMaxMinSeriesSum(data)
+    console.log('datadatadatadatadatadatadatadatadatadatadatadata')
+    console.log(minmax_series_sums)
+    let scaleC = d3.scaleLinear().domain(minmax_series_sums).range(['red', 'black', 'green'])
+    console.log(scaleC(0))
     
     let states = {}
     for (let j = 0 ; j < data.dfrs.length ; j+= 1){
@@ -66,82 +68,11 @@ function drawDFG(data){
         let temp_sum = data.dfrs[j].series_sum_each_arc;
         let temp_sum_prev = data.dfrs[j].series_sum_each_arc_prev
         let temp_sum_next = data.dfrs[j].series_sum_each_arc_next
-        let temp_diff = temp_sum_next - temp_sum_prev;
 
         if (temp_sum > config_dfg.threshold_arc_min){
             // // Set up the edges
-            if (!(temp_sum_prev === undefined)){
                 // the difference between the two datasets is larger than some value:
-                // if (data.dfrs[j].series_sum_each_arc_diff > config_dfg.threshold_arc_diff_min){
-                if (temp_diff > 0){
-                    config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
-                        {
-                            curve: d3.curveBasis, // cuvre the edges
-                            labelStyle: 'stroke: ' + colors["edge_future"],
-                            // label: round_and_to_string(temp_sum) + ' ↑' + round_and_to_string(temp_sum_diff),
-                            label: round_and_to_string(temp_sum_prev)  
-                                                        + '→' 
-                                                        + round_and_to_string(temp_sum_next),
-                            // additional options possible
-                            // style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_future"),
-                            style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, scaleC(temp_diff)),
-                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2, 'edge_future')
-                        })
-                } 
-                // the diff is smaller than some val
-                // else if (data.dfrs[j].series_sum_each_arc_diff < -1 * config_dfg.threshold_arc_diff_min){
-                else if (temp_diff < 0){
-                    config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
-                        {
-                            curve: d3.curveBasis, // cuvre the edges
-                            labelStyle: 'stroke: ' + colors["edge_past"],
-                            // label: round_and_to_string(temp_sum)
-                            //             + ' ↓' 
-                            //             + round_and_to_string(temp_sum_diff),
-                            label: round_and_to_string(temp_sum_prev)
-                                        + '→' 
-                                        + round_and_to_string(temp_sum_next),
-                            // additional options possible
-                            style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_past"), 
-                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,"edge_past")
-                        })
-                    
-                } else {
-                    config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
-                        {
-                            curve: d3.curveBasis, // cuvre the edges
-                            label: round_and_to_string(temp_sum_prev)
-                                                    + '→' 
-                                                    + round_and_to_string(temp_sum_next),
-                            style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_neutral"), 
-                            arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,'edge_neutral')
-
-                        })
-                    
-                }
-            } else {
-                config_dfg.g.setEdge(data.dfrs[j].act1, data.dfrs[j].act2, 
-                    {
-                        curve: d3.curveBasis, // cuvre the edges
-                        label: round_and_to_string(temp_sum),
-                        style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_neutral"), 
-                        arrowheadStyle: arrow_style(data.dfrs[j].act1, data.dfrs[j].act2,'edge_neutral')
-                        //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
-                        // arrowheadStyle: "fill: #f66" 
-                        // additional options possible
-                        // style: "stroke: #aaa;   stroke-dasharray: 5, 10;" 
-                        // ,curve: d3.curveBasis
-                        // ,arrowheadStyle: "fill: #aaa"
-                        // ,labelpos: 'c'
-                        // label: 'pruned'
-                        // ,labelStyle: 'stroke: #aaa'
-                        // labeloffset: 5
-                        // arrowhead: 'undirected'
-                    })
-                
-            }
-
-            
+            setEdgeWithParams(config_dfg, data.dfrs[j].act1, data.dfrs[j].act2,temp_sum, temp_sum_next, temp_sum_prev, scaleC)   
         }
     }
     
@@ -274,21 +205,100 @@ function arrow_style(act1, act2, edge_type){
     } 
 }
 
+
+// this code sets the style for the arcs
+function edge_style_colorlevels(act1, act2, edge_scale_val,  color){
+    if (act1 === 'start'){
+        return "stroke: " + color + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 4, 10"
+    }
+    else if (act2 === 'end') {
+        return "stroke: " + color + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px; stroke-dasharray: 10, 4"
+    } else {
+        return "stroke: " + color + "; stroke-width: " + config_dfg.edge_size_scale(edge_scale_val) + "px";
+    }
+    
+}
+
+
 // todo: stepwise color for the arcs in two brushed version
-// function determineMaxMinSeriesSum(data) {
-//     let mi = Infinity;
-//     let ma = 0;
-//     console.log('here -<<')
-//     console.log(data)
-//     for (let i = 0; i < data.dfrs.length ; i += 1){
-//         let t = data.dfrs[i].series_sum_each_arc_next - data.dfrs[i].series_sum_each_arc_prev;
-//         if (mi > t) {
-//             mi = t;
-//         } 
-//         if (ma < t) {
-//             ma = t;
-//         }
-//     }
-//     console.log('here ->>')
-//     return [mi, ma]
-// }
+function determineMaxMinSeriesSum(data) {
+    let mi = Infinity;
+    let ma = 0;
+    console.log('here -<<')
+    console.log(data)
+    for (let i = 0; i < data.dfrs.length ; i += 1){
+        let t = data.dfrs[i].series_sum_each_arc_next - data.dfrs[i].series_sum_each_arc_prev;
+        if (mi > t) {
+            mi = t;
+        } 
+        if (ma < t) {
+            ma = t;
+        }
+    }
+    console.log('here ->>')
+    return [mi, 0, ma]
+}
+
+
+
+function setEdgeWithParams(config, act1, act2, sum, sum_next, sum_prev = undefined, scaleC = undefined){
+    // we are dealing with two brushed regions
+    if (sum_prev) {
+        let temp_diff = sum_next - sum_prev;
+        if (config.coloring === "threecolors") {
+            let color = "edge_neutral"
+            if (temp_diff > 0) {
+                color = "edge_future"
+            } else if (temp_diff < 0) {
+                color = "edge_past"
+            }
+            config.g.setEdge(act1, act2, 
+                {
+                    curve: d3.curveBasis, // cuvre the edges
+                    labelStyle: 'stroke: ' + colors[color],
+                    // label: round_and_to_string(temp_sum) + ' ↑' + round_and_to_string(temp_sum_diff),
+                    label: round_and_to_string(sum_prev)  
+                                                + '→' 
+                                                + round_and_to_string(sum_next),
+                    // additional options possible
+                    // style: edge_style(data.dfrs[j].act1, data.dfrs[j].act2, temp_sum, "edge_future"),
+                    style: edge_style(act1, act2, sum, color),
+                    arrowheadStyle: arrow_style(act1, act2, color)
+                })
+        } else if (config.coloring === "levelthreecolors") {
+            // console.log(d3.color(scaleC(temp_diff)).formatHex()) // this is formatting from RGB to HEX
+            config.g.setEdge(act1, act2, 
+                {
+                    curve: d3.curveBasis, // cuvre the edges
+                    labelStyle: 'stroke: ' + d3.color(scaleC(temp_diff)).formatHex(),
+                    label: round_and_to_string(sum_prev)  
+                                                + '→' 
+                                                + round_and_to_string(sum_next),
+                    style: edge_style_colorlevels(act1, act2, sum, d3.color(scaleC(temp_diff)).formatHex()),
+                    arrowheadStyle: "fill: " +  d3.color(scaleC(temp_diff)).formatHex()
+                })
+        }
+        
+    } else {
+        config_dfg.g.setEdge(act1, act2, 
+            {
+                curve: d3.curveBasis, // cuvre the edges
+                label: round_and_to_string(sum),
+                style: edge_style(act1, act2, sum, "edge_neutral"), 
+                arrowheadStyle: arrow_style(act1, act2,'edge_neutral')
+                //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
+                // arrowheadStyle: "fill: #f66" 
+                // additional options possible
+                // style: "stroke: #aaa;   stroke-dasharray: 5, 10;" 
+                // ,curve: d3.curveBasis
+                // ,arrowheadStyle: "fill: #aaa"
+                // ,labelpos: 'c'
+                // label: 'pruned'
+                // ,labelStyle: 'stroke: #aaa'
+                // labeloffset: 5
+                // arrowhead: 'undirected'
+            })
+
+    }
+    
+}
