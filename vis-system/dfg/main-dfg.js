@@ -138,6 +138,21 @@ function drawDFG(data){
         .attr("title", function(v) { return styleTooltip(v, config_dfg.g.node(v).description) })
         .each(function(v) { $(this).tipsy({ gravity: "w", opacity: 1, html: true}); });
     
+    // add tooltip
+
+    // console.log("inner: ")
+    // console.log(config_dfg.g)
+
+    // var styleTooltip = function(v,k) {
+    //     return "<p class='name'>" + v + " </p><p class='description'> " + k + " </p>";
+    // };
+
+    // inner.selectAll("g.edgePath")
+    //     .attr("title", function(v,k) { return styleTooltip(v,k) })
+    //         .each(function(v,k) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
+
+
+
     // Center the graph
     
     
