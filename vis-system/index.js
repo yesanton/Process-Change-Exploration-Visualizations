@@ -55,7 +55,8 @@ let filteredDataPASlider = {};
 let sliders = {path: 1, activity: 1}
 
 // d3.csv("data/new_sepsis-no_int-50-aggregation-equisize.csv",
-d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize.csv",
+// d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize.csv",
+d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize_actual.csv",
 // d3.csv("data/sepsis.csv",
 
   // When reading the csv, I must format variables:
@@ -373,6 +374,7 @@ function calculateActivitiesImportance(d){
     for (let i=0; i < d.dfrs.length ; i+=1) {
         activity_count[d.dfrs[i].act1] = 0
     }
+
     for (let i=0; i < d.dfrs.length ; i+=1){
         if (d.dfrs[i].act1 in activity_count) {
             activity_count[d.dfrs[i].act1] += d.dfrs[i].series_sum_each_arc; 

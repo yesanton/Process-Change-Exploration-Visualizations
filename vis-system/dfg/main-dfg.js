@@ -14,6 +14,8 @@ function configDFG(data){
     config.threshold_arc_diff_min = 10
     config.coloring = "levelthreecolors" //"threecolors" // 
 
+    config.font_size = ""//"font-size: 3em" // or empty for normal: ''
+
     config.dashes = {
         end: 'stroke-dasharray: 5, 10',
         start: 'stroke-dasharray: 5, 5'
@@ -92,10 +94,12 @@ function drawDFG(data){
             value.label = state + " (" + Math.round(data.activity_count[state]) + ")";
         }
         value.rx = value.ry = 5;
-
+        value.labelStyle = config.font_size;
+        
         if (state === 'end' || state === 'start') {
             // console.log(state)
             value.shape = 'ellipse'
+            
             value.style = "fill: " + config_dfg.node_end_start_color_scale(data.activity_count[state])
             config_dfg.g.setNode(state, value);
         } else {
@@ -103,9 +107,18 @@ function drawDFG(data){
                 // the diverging color schema for the difference 
                 // value.style = "fill: " + config_dfg.node_color_scale_diff(data.activity_count[state]- data.activity_count_prev[state]);
             // } else {
-                value.style = "fill: " + config_dfg.node_color_scale(data.activity_count[state]);
+            value.style = "fill: " + config_dfg.node_color_scale(data.activity_count[state]);
             // }
             
+            if (state === 'Send for Credit Collection') {
+                console.log("===============================data.activity_count[state]")
+
+                console.log(data.activity_count[state])
+                console.log(data.activity_count)
+                console.log(data)
+
+            }
+
             config_dfg.g.setNode(state, value);
         }
     });
@@ -147,9 +160,24 @@ function drawDFG(data){
     //     return "<p class='name'>" + v + " </p><p class='description'> " + k + " </p>";
     // };
 
+
+    // var tooltip = d3.select("#DFGChart")
+    //     .append("div")
+    //     .style("position", "absolute")
+    //     .style("visibility", "visible")
+    //     .style('top', "200px")
+    //     .style('left', "200px")
+    //     .text("I'm a circle!");
+
     // inner.selectAll("g.edgePath")
-    //     .attr("title", function(v,k) { return styleTooltip(v,k) })
-    //         .each(function(v,k) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
+    //     .on("mouseover", function(){
+    //         console.log('HERE IN HERE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+    //         return tooltip.style("visibility", "visible");})
+    //     .on("mousemove", function(){return tooltip.style("top", 100+"px").style("left",100+"px");})
+    //     .on("mouseout", function(){return tooltip.style("visibility", "hidden");});    
+    
+    // .attr("title", function(v,k) { return styleTooltip(v,k) })
+        //     .each(function(v,k) { $(this).tipsy({ gravity: "w", opacity: 1, html: true }); });
 
 
 
@@ -270,7 +298,7 @@ function setEdgeWithParams(config, act1, act2, sum, sum_next, sum_prev = undefin
             config.g.setEdge(act1, act2, 
                 {
                     curve: d3.curveBasis, // cuvre the edges
-                    labelStyle: 'stroke: ' + colors[color],
+                    labelStyle: 'stroke: ' + colors[color] + "; " + config.font_size,
                     // label: round_and_to_string(temp_sum) + ' ↑' + round_and_to_string(temp_sum_diff),
                     label: round_and_to_string(sum_prev)  
                                                 + '→' 
@@ -285,7 +313,7 @@ function setEdgeWithParams(config, act1, act2, sum, sum_next, sum_prev = undefin
             config.g.setEdge(act1, act2, 
                 {
                     curve: d3.curveBasis, // cuvre the edges
-                    labelStyle: 'stroke: ' + d3.color(scaleC(temp_diff)).formatHex(),
+                    labelStyle: 'stroke: ' + d3.color(scaleC(temp_diff)).formatHex() + "; " + config.font_size,
                     label: round_and_to_string(sum_prev)  
                                                 + '→' 
                                                 + round_and_to_string(sum_next),
@@ -300,7 +328,8 @@ function setEdgeWithParams(config, act1, act2, sum, sum_next, sum_prev = undefin
                 curve: d3.curveBasis, // cuvre the edges
                 label: round_and_to_string(sum),
                 style: edge_style(act1, act2, sum, "edge_neutral"), 
-                arrowheadStyle: arrow_style(act1, act2,'edge_neutral')
+                arrowheadStyle: arrow_style(act1, act2,'edge_neutral'),
+                labelStyle: config.font_size
                 //style: "stroke: #f66; stroke-width: 3px; stroke-dasharray: 5, 5;",
                 // arrowheadStyle: "fill: #f66" 
                 // additional options possible
