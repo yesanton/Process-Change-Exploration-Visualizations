@@ -13,6 +13,7 @@ var pathSlider = d3
     .height(div_sizes.height - position.padding_big * 3.5)
     .tickFormat(d3.format('.0%'))
     .ticks(2)
+    .tickPadding(0)
     .default(1)
     .displayValue(true)
     .on('onchange', (valPath) => {
@@ -35,6 +36,7 @@ var activitySlider = d3
     .width(div_sizes.width)
     .height(div_sizes.height - position.padding_big * 3.5)
     .ticks(2)
+    .tickPadding(0)
     .tickFormat(d3.format('.0%'))
     .displayValue(true)
     .on('onchange', (valActivity) => {

@@ -14,7 +14,7 @@ function configDFG(data){
     config.threshold_arc_diff_min = 10
     config.coloring = "levelthreecolors" //"threecolors" // 
 
-    config.font_size = ""//"font-size: 3em" // or empty for normal: ''
+    config.font_size = "" //"font-size: 2em" // or empty for normal: ''
 
     config.dashes = {
         end: 'stroke-dasharray: 5, 10',
@@ -313,7 +313,7 @@ function setEdgeWithParams(config, act1, act2, sum, sum_next, sum_prev = undefin
             config.g.setEdge(act1, act2, 
                 {
                     curve: d3.curveBasis, // cuvre the edges
-                    labelStyle: 'stroke: ' + d3.color(scaleC(temp_diff)).formatHex() + "; " + config.font_size,
+                    labelStyle: 'fill: ' + d3.color(scaleC(temp_diff)).formatHex() + "; " + config.font_size,
                     label: round_and_to_string(sum_prev)  
                                                 + '→' 
                                                 + round_and_to_string(sum_next),

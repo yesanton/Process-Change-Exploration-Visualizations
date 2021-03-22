@@ -100,7 +100,16 @@ function drawLineplot(data, separate_at){
       .y0(y(0))
       .y1(function(d) { return y(d.value) })
     )
-  // We initially generate a SVG group to keep our brushes' DOM elements in:
+
+    // add line to separate prediction and actual
+    config_lineplot.svg.append('line')
+      .style("stroke", "#fec44f")
+      .style("stroke-width", 5)
+      .attr("x1", config_lineplot.separate_at * config.width - 2.5)
+      .attr("y1", config_lineplot.separate_at)
+      .attr("x2", config_lineplot.separate_at * config.width - 2.5)
+      .attr("y2", config_lineplot.height + 1);
+    // We initially generate a SVG group to keep our brushes' DOM elements in:
   var gBrushes = config_lineplot.svg.append('g')
     .attr("class", "brushes");
 
