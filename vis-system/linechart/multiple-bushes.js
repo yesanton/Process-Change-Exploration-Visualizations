@@ -3,7 +3,7 @@ function configLineplot(separate_at){
     top: 10,
     right: 10,
     bottom: 30,
-    left: 40
+    left: 50
   },
 
   div_sizes = document.getElementById('LineChart').getBoundingClientRect()
@@ -101,13 +101,17 @@ function drawLineplot(data, separate_at){
       .y1(function(d) { return y(d.value) })
     )
 
+    console.log('------------++++++------=====--__++__+_++')
+    console.log(config_lineplot.width)
+    console.log(config_lineplot.separate_at)
+    
     // add line to separate prediction and actual
     config_lineplot.svg.append('line')
       .style("stroke", "#fec44f")
       .style("stroke-width", 5)
-      .attr("x1", config_lineplot.separate_at * config.width - 2.5)
+      .attr("x1", config_lineplot.separate_at * config_lineplot.width + config_lineplot.margin.right)
       .attr("y1", config_lineplot.separate_at)
-      .attr("x2", config_lineplot.separate_at * config.width - 2.5)
+      .attr("x2", config_lineplot.separate_at * config_lineplot.width + config_lineplot.margin.right)
       .attr("y2", config_lineplot.height + 1);
     // We initially generate a SVG group to keep our brushes' DOM elements in:
   var gBrushes = config_lineplot.svg.append('g')

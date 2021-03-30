@@ -55,7 +55,10 @@ let filteredDataPASlider = {};
 let sliders = {path: 1, activity: 1}
 
 // d3.csv("data/new_sepsis-no_int-50-aggregation-equisize.csv",
-d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize.csv",
+// d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize.csv",
+d3.csv("data/new_rtfmp-no_int-75-aggregation-equisize_forecast.csv",
+// d3.csv("data/new_rtfmp-no_int-75-aggregation-equisize_actual.csv",
+
 // d3.csv("data/new_rtfmp-no_int-70-aggregation-equisize_actual.csv",
 // d3.csv("data/sepsis.csv",
 
